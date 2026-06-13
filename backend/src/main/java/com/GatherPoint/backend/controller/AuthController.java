@@ -2,7 +2,7 @@ package com.GatherPoint.backend.controller;
 
 import com.GatherPoint.backend.Model.User;
 import com.GatherPoint.backend.Repo.UserRepo;
-import com.GatherPoint.backend.config.JwtUtil;
+import com.GatherPoint.backend.Security.JwtUtil;
 import com.GatherPoint.backend.dto.AuthResponse;
 import com.GatherPoint.backend.dto.LoginRequest;
 import com.GatherPoint.backend.dto.RefreshTokenRequest;
@@ -107,5 +107,13 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok("Successfully logged out!");
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(org.springframework.security.core.Authentication authentication) {
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            return ResponseEntity.ok(authentication.getPrincipal());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }
 }
