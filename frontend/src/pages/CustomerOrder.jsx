@@ -106,13 +106,13 @@ const CustomerOrder = () => {
 
       {/* ── Full-Width Navbar ── */}
       <nav className="w-full sticky top-0 z-50 bg-customer-bg/95 backdrop-blur-xl border-b border-white/10 shadow-[0_2px_24px_rgba(0,0,0,0.5)]">
-        <div className="w-full px-6 lg:px-12 h-[68px] flex items-center justify-between gap-6">
+        <div className="w-full px-6 lg:px-12 h-[80px] flex items-center justify-between gap-6">
 
           {/* Brand */}
           <div className="flex items-center gap-3 shrink-0">
-            <Logo className="w-11 h-11" />
+            <Logo className="w-14 h-14" />
             <span
-              className="text-[1.35rem] font-bold tracking-wide text-customer-accent"
+              className="text-[1.6rem] font-bold tracking-wide text-customer-accent"
               style={{ fontFamily: "'Great Vibes', cursive" }}
             >GatherPoint</span>
           </div>
@@ -124,9 +124,9 @@ const CustomerOrder = () => {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full border border-customer-accent/50 text-customer-accent text-sm font-semibold hover:bg-customer-accent hover:text-customer-bg transition-all duration-200"
+              className="hidden sm:flex items-center gap-2 px-7 py-3.5 rounded-full border border-customer-accent/50 text-customer-accent text-base font-semibold hover:bg-customer-accent hover:text-customer-bg transition-all duration-200"
             >
-              Browse Menu <ChevronDown size={14} />
+              Browse Menu <ChevronDown size={18} />
             </motion.button>
 
             {/* Cart */}
@@ -134,9 +134,9 @@ const CustomerOrder = () => {
               whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.94 }}
               onClick={() => document.getElementById('cart-trigger-btn')?.click()}
-              className="relative flex items-center gap-2 px-5 py-2.5 rounded-full bg-customer-primary text-customer-text font-bold text-sm hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_18px_rgba(45,106,79,0.35)]"
+              className="relative flex items-center gap-2 px-7 py-3.5 rounded-full bg-customer-primary text-customer-text font-bold text-base hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_18px_rgba(45,106,79,0.35)]"
             >
-              <ShoppingBag size={16} />
+              <ShoppingBag size={20} />
               <span className="hidden sm:inline">Cart</span>
               <AnimatePresence>
                 {totalItems > 0 && (
@@ -165,7 +165,7 @@ const CustomerOrder = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.45 }}
-            className="relative w-full overflow-hidden min-h-[calc(100vh-68px)] flex flex-col"
+            className="relative w-full overflow-hidden min-h-[calc(100vh-80px)] flex flex-col"
             style={{ background: '#071B14' }}
           >
             {/* Subtle background glow */}
@@ -174,7 +174,7 @@ const CustomerOrder = () => {
               <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-customer-accent/5 blur-[120px]" />
             </div>
 
-            <div className="relative flex-1 w-full max-w-7xl mx-auto pl-20 pr-10 lg:pl-40 lg:pr-16 flex flex-col lg:flex-row items-center justify-center gap-16">
+            <div className="relative flex-1 w-full max-w-7xl mx-auto pl-32 pr-10 lg:pl-56 lg:pr-16 flex flex-col lg:flex-row items-center justify-center gap-16">
 
               {/* ── LEFT: Text ── */}
               <motion.div
@@ -188,7 +188,7 @@ const CustomerOrder = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.65 }}
-                  className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-5"
+                  className="text-6xl sm:text-7xl lg:text-8xl font-bold leading-tight mb-5"
                   style={{ fontFamily: "'Cinzel', serif", color: '#c9a96e' }}
                 >
                   Gather Point
@@ -207,7 +207,7 @@ const CustomerOrder = () => {
                   transition={{ delay: 0.42 }}
                   whileHover={{ x: 4 }}
                   onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-block text-base font-bold tracking-wide mb-6 text-left"
+                  className="inline-block text-lg font-bold tracking-wide mb-6 text-left"
                   style={{
                     color: '#e8d5a3',
                     textDecoration: 'underline',
@@ -226,8 +226,8 @@ const CustomerOrder = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.58 }}
-                  className="text-lg lg:text-xl leading-relaxed"
-                  style={{ color: 'rgba(255,255,255,0.55)', maxWidth: '420px' }}
+                  className="text-xl lg:text-2xl leading-relaxed"
+                  style={{ color: 'rgba(255,255,255,0.55)', maxWidth: '460px' }}
                 >
                   Connecting tables, people and experiences.
                 </motion.p>
@@ -323,8 +323,8 @@ const CustomerOrder = () => {
       {/* ── Menu Section ── */}
       <div ref={menuRef} className="w-full">
         {/* Sticky category tabs */}
-        <div className="sticky top-[68px] z-40 w-full bg-customer-bg/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-          <div className="w-full px-4 lg:px-10 py-3 flex items-center gap-3 overflow-x-auto no-scrollbar">
+        <div className="sticky top-[80px] z-40 w-full bg-customer-bg/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+          <div className="w-full pl-32 pr-6 lg:pl-56 lg:pr-12 h-[70px] flex items-center justify-between gap-2">
             {[
               { label: 'All',         icon: '🍴' },
               { label: 'Coffee',      icon: '☕' },
@@ -343,13 +343,13 @@ const CustomerOrder = () => {
                 whileHover={{ scale: 1.06 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedCategory(label)}
-                className={`shrink-0 flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                className={`flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-full text-base font-semibold transition-all duration-200 whitespace-nowrap ${
                   selectedCategory === label
-                    ? 'bg-customer-accent text-customer-bg shadow-[0_0_14px_rgba(212,163,115,0.45)]'
+                    ? 'bg-customer-accent text-customer-bg shadow-[0_0_18px_rgba(212,163,115,0.5)]'
                     : 'bg-white/5 text-customer-text/55 border border-white/10 hover:border-customer-accent/40 hover:text-customer-accent hover:bg-customer-accent/5'
                 }`}
               >
-                <span className="text-base leading-none">{icon}</span>
+                <span className="text-xl leading-none">{icon}</span>
                 {label}
               </motion.button>
             ))}
