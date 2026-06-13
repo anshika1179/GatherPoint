@@ -212,32 +212,11 @@ const CustomerOrder = () => {
                   />
                 </motion.h1>
 
-                {/* Browse Menu underline link */}
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.42 }}
-                  whileHover={{ x: 4 }}
-                  onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-block text-lg font-bold tracking-wide mb-6 text-left"
-                  style={{
-                    color: '#e8d5a3',
-                    textDecoration: 'underline',
-                    textUnderlineOffset: '4px',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                  }}
-                >
-                  Browse Menu
-                </motion.button>
-
                 {/* Subtitle */}
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.58 }}
+                  transition={{ delay: 0.42 }}
                   className="text-xl lg:text-2xl leading-relaxed"
                   style={{ color: 'rgba(255,255,255,0.55)', maxWidth: '460px' }}
                 >
