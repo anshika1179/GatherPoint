@@ -130,23 +130,13 @@ const CustomerOrder = () => {
           </div>
 
           {/* Right actions */}
-          <div className="flex items-center gap-3 shrink-0 ml-auto">
-            {/* Browse menu shortcut */}
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="hidden sm:flex items-center gap-2 px-7 py-3.5 rounded-full border border-customer-accent/50 text-customer-accent text-base font-semibold hover:bg-customer-accent hover:text-customer-bg transition-all duration-200"
-            >
-              Browse Menu <ChevronDown size={18} />
-            </motion.button>
-
+          <div className="flex items-center gap-3 shrink-0 ml-auto mt-2 mr-2 lg:mr-6">
             {/* Cart */}
             <motion.button
               whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.94 }}
               onClick={() => document.getElementById('cart-trigger-btn')?.click()}
-              className="relative flex items-center gap-2 px-7 py-3.5 rounded-full bg-customer-primary text-customer-text font-bold text-base hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_18px_rgba(45,106,79,0.35)]"
+              className="relative flex items-center gap-2 px-7 py-3.5 mt-3 mr-3 lg:mr-4 rounded-full bg-customer-primary text-customer-text font-bold text-base hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_18px_rgba(45,106,79,0.35)]"
             >
               <ShoppingBag size={20} />
               <span className="hidden sm:inline">Cart</span>

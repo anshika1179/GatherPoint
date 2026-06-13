@@ -23,7 +23,7 @@ const FloatingCart = ({ cart, updateQuantity, removeItem, onCheckout }) => {
   return (
     <>
       {/* Top Right Floating Button — hidden since navbar has cart, kept as programmatic trigger */}
-      <div className="fixed top-20 right-6 z-50">
+      <div className="fixed top-20 right-6 z-50 hidden">
         <button
           id="cart-trigger-btn"
           onClick={() => setIsOpen(true)}
