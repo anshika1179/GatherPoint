@@ -353,7 +353,7 @@ const CustomerOrder = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
-          className="w-full px-6 lg:px-12 pt-10 pb-4"
+          className="w-full pl-32 pr-10 lg:pl-56 lg:pr-16 pt-10 pb-4"
         >
           <h2 className="text-2xl font-bold text-customer-text">
             {selectedCategory === 'All' ? 'All Items' : selectedCategory}
@@ -362,7 +362,7 @@ const CustomerOrder = () => {
         </motion.div>
 
         {/* Product Grid */}
-        <div className="w-full px-6 lg:px-12 pb-40">
+        <div className="w-full pl-32 pr-10 lg:pl-56 lg:pr-16 pb-40">
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedCategory}
