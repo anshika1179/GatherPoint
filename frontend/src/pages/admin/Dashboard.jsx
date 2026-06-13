@@ -56,7 +56,25 @@ const Dashboard = () => {
     { id: 4, name: 'Fudge Brownie', category: 'Dessert', revenue: 12000, salesCount: 120, image: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=150&q=80' },
   ];
 
-  const chartData = [40, 70, 45, 90, 65, 85, 120];
+  const [activeTab, setActiveTab] = useState('Daily');
+
+  const chartDatasets = {
+    Daily: {
+      data: [40000, 70000, 45000, 90000, 65000, 85000, 120000],
+      labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7']
+    },
+    Weekly: {
+      data: [350000, 420000, 380000, 510000],
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4']
+    },
+    Monthly: {
+      data: [1200000, 1500000, 1300000, 1800000, 1600000, 2100000, 2400000, 2200000, 2500000, 2700000, 2600000, 3100000],
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    }
+  };
+
+  const currentDataset = chartDatasets[activeTab];
+  const chartData = currentDataset.data;
   const maxVal = Math.max(...chartData);
   const chartHeight = 220;
   const chartWidth = 800;
@@ -132,9 +150,19 @@ const Dashboard = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-[#FAF8F1] font-semibold font-serif text-xl tracking-wide">Revenue Trend</h2>
               <div className="flex gap-2 bg-[#071B14] p-1 rounded-lg border border-[#D4A373]/20">
-                <button className="px-3 py-1 text-xs font-medium bg-[#2D6A4F]/40 text-[#D4A373] rounded-md">Daily</button>
-                <button className="px-3 py-1 text-xs font-medium text-gray-400 hover:text-white">Weekly</button>
-                <button className="px-3 py-1 text-xs font-medium text-gray-400 hover:text-white">Monthly</button>
+                {['Daily', 'Weekly', 'Monthly'].map(tab => (
+                  <button 
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                      activeTab === tab 
+                        ? 'bg-[#2D6A4F]/40 text-[#D4A373]' 
+                        : 'text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
             </div>
             
@@ -149,15 +177,17 @@ const Dashboard = () => {
                 
                 {/* Animated Fill Area */}
                 <motion.path
+                  key={`area-${activeTab}`}
                   d={areaPath}
                   fill="url(#areaGradient)"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 0.5 }}
+                  transition={{ duration: 1 }}
                 />
                 
                 {/* Animated Line */}
                 <motion.path
+                  key={`line-${activeTab}`}
                   d={linePath}
                   fill="none"
                   stroke="#D4A373"
@@ -171,7 +201,7 @@ const Dashboard = () => {
 
                 {/* Points and Tooltips */}
                 {chartPoints.map((p, i) => (
-                  <g key={i} className="group">
+                  <g key={`point-${activeTab}-${i}`} className="group">
                     <motion.circle
                       cx={p.x}
                       cy={p.y}
@@ -181,7 +211,7 @@ const Dashboard = () => {
                       strokeWidth="3"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ delay: 1 + i * 0.1, type: "spring" }}
+                      transition={{ delay: i * 0.1, type: "spring" }}
                       className="cursor-pointer transition-all duration-300 group-hover:r-8"
                     />
                     <text 
@@ -193,7 +223,7 @@ const Dashboard = () => {
                       textAnchor="middle"
                       className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-md"
                     >
-                      ₹{chartData[i] * 1000}
+                      ₹{chartData[i].toLocaleString('en-IN')}
                     </text>
                     <text 
                       x={p.x} 
@@ -203,7 +233,7 @@ const Dashboard = () => {
                       fontWeight="500" 
                       textAnchor="middle"
                     >
-                      Day {i+1}
+                      {currentDataset.labels[i]}
                     </text>
                   </g>
                 ))}
