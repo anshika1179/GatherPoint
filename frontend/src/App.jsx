@@ -1,219 +1,204 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// Components
+// ── Core / Layout ──────────────────────────────────────────────────────────────
 import Layout from './components/Layout';
 import LandingPage from './components/LandingPage';
-import CustomerLoginPage from './components/CustomerLoginPage';
+import AccessDenied from './components/AccessDenied';
+
+// ── Auth pages ─────────────────────────────────────────────────────────────────
 import StaffPosLogin from './components/StaffPosLogin';
+import CustomerLoginPage from './components/CustomerLoginPage';
+
+// ── Staff pages (old Layout wrapper) ──────────────────────────────────────────
 import PosTerminal from './components/PosTerminal';
 import Orders from './components/Orders';
 import Customers from './components/Customers';
 import Tables from './components/Tables';
 import Kitchen from './components/Kitchen';
-
 import Reports from './components/Reports';
 import SessionManager from './components/SessionManager';
-import AccessDenied from './components/AccessDenied';
 
-// New Admin Dashboard Components
+// ── Admin shell ────────────────────────────────────────────────────────────────
 import AdminLayout from './components/admin/AdminLayout';
+
+// ── Admin pages ────────────────────────────────────────────────────────────────
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminProducts from './pages/admin/Products';
 import AdminCategories from './pages/admin/Categories';
-import AdminTables from './pages/admin/Tables';
 import AdminEmployees from './pages/admin/Employees';
-import AdminReports from './pages/admin/Reports';
 
-// Hooks
+// ── Hooks / Utils ──────────────────────────────────────────────────────────────
 import useAuth from './hooks/useAuth';
-
-// Utils
 import { constants } from './utils/constants';
 
-// Query client for React Query
+// ── React-Query client ─────────────────────────────────────────────────────────
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
+    queries: { retry: 1, refetchOnWindowFocus: false },
   },
 });
 
-// Helper: get the correct dashboard route for a given role
-const getDashboardRoute = (role) => {
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Map a role to its home route */
+const roleHome = (role) => {
   switch (role) {
-    case constants.ROLES.ADMIN:
-      return '/admin';
-    case constants.ROLES.KITCHEN_STAFF:
-      return '/kitchen';
+    case constants.ROLES.ADMIN:         return '/admin/dashboard';
+    case constants.ROLES.KITCHEN_STAFF: return '/kitchen';
     case constants.ROLES.EMPLOYEE:
-    default:
-      return '/pos';
+    default:                            return '/pos';
   }
 };
 
-// Redirect authenticated staff users to their role-specific dashboard
-const RoleBasedRedirect = () => {
+/** Full-screen spinner shown while auth resolves */
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen bg-[#020403]">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]" />
+  </div>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// /staff-pos  — show login OR redirect to role dashboard
+// ─────────────────────────────────────────────────────────────────────────────
+const StaffPosGate = () => {
   const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <StaffPosLogin />;
-  }
-
-  return <Navigate to={getDashboardRoute(user.role)} replace />;
+  if (loading) return <LoadingSpinner />;
+  if (user)    return <Navigate to={roleHome(user.role)} replace />;
+  return <StaffPosLogin />;
 };
 
-// Protected Route component
+// ─────────────────────────────────────────────────────────────────────────────
+// Generic protected-route wrapper
+// ─────────────────────────────────────────────────────────────────────────────
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/staff-pos" replace />;
-  }
-
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <AccessDenied />;
-  }
-
+  if (loading) return <LoadingSpinner />;
+  if (!user)   return <Navigate to="/staff-pos" replace />;
+  if (allowedRoles && !allowedRoles.includes(user.role)) return <AccessDenied />;
   return children;
 };
 
-// Main App component
-function App() {
-  const { user } = useAuth();
+// ─────────────────────────────────────────────────────────────────────────────
+// App
+// ─────────────────────────────────────────────────────────────────────────────
+export default function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) return <LoadingSpinner />;
 
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>
-        {/* Public routes */}
-        <Route
-          path="/login"
-          element={!user ? <CustomerLoginPage /> : <Navigate to="/" replace />}
-        />
-        <Route
-          path="/staff-pos/*"
-          element={<RoleBasedRedirect />}
-        />
+
+        {/* ── Public ──────────────────────────────────────────────────────── */}
         <Route path="/" element={<LandingPage />} />
 
-        {/* Protected routes */}
+        {/* Customer login (Clerk or email) */}
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" replace /> : <CustomerLoginPage />}
+        />
+
+        {/* Staff / admin login — Clerk renders here */}
+        <Route path="/staff-pos" element={<StaffPosGate />} />
+
+        {/* ── Staff routes (EMPLOYEE or ADMIN) ─────────────────────────── */}
         <Route
           path="/pos"
           element={
             <ProtectedRoute allowedRoles={[constants.ROLES.EMPLOYEE, constants.ROLES.ADMIN]}>
-              <Layout>
-                <PosTerminal />
-              </Layout>
+              <Layout><PosTerminal /></Layout>
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/orders"
           element={
             <ProtectedRoute allowedRoles={[constants.ROLES.EMPLOYEE, constants.ROLES.ADMIN]}>
-              <Layout>
-                <Orders />
-              </Layout>
+              <Layout><Orders /></Layout>
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/customers"
           element={
             <ProtectedRoute allowedRoles={[constants.ROLES.EMPLOYEE, constants.ROLES.ADMIN]}>
-              <Layout>
-                <Customers />
-              </Layout>
+              <Layout><Customers /></Layout>
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/tables"
           element={
             <ProtectedRoute allowedRoles={[constants.ROLES.EMPLOYEE, constants.ROLES.ADMIN]}>
-              <Layout>
-                <Tables />
-              </Layout>
+              <Layout><Tables /></Layout>
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/kitchen"
           element={
             <ProtectedRoute allowedRoles={[constants.ROLES.KITCHEN_STAFF, constants.ROLES.ADMIN]}>
-              <Layout>
-                <Kitchen />
-              </Layout>
+              <Layout><Kitchen /></Layout>
             </ProtectedRoute>
           }
         />
-
-        <Route
-          path="/admin"
-          element={
-            <AdminLayout />
-          }
-        >
-          <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="categories" element={<AdminCategories />} />
-          <Route path="tables" element={<AdminTables />} />
-          <Route path="employees" element={<AdminEmployees />} />
-          <Route path="reports" element={<AdminReports />} />
-          {/* Catch-all for undefined admin routes */}
-          <Route path="*" element={<div className="p-8 text-white">Under Construction</div>} />
-        </Route>
-
         <Route
           path="/reports"
           element={
             <ProtectedRoute allowedRoles={[constants.ROLES.EMPLOYEE, constants.ROLES.ADMIN]}>
-              <Layout>
-                <Reports />
-              </Layout>
+              <Layout><Reports /></Layout>
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/session"
           element={
             <ProtectedRoute allowedRoles={[constants.ROLES.EMPLOYEE, constants.ROLES.ADMIN]}>
-              <Layout>
-                <SessionManager />
-              </Layout>
+              <Layout><SessionManager /></Layout>
             </ProtectedRoute>
           }
         />
 
-        {/* Fallback route */}
+        {/* ── Admin panel (ADMIN only) ──────────────────────────────────── */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={[constants.ROLES.ADMIN]}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Index → dashboard */}
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard"  element={<AdminDashboard />} />
+
+          {/* Management */}
+          <Route path="products"   element={<AdminProducts />} />
+          <Route path="categories" element={<AdminCategories />} />
+          <Route path="tables"     element={<Tables />} />
+          <Route path="employees"  element={<AdminEmployees />} />
+
+          {/* Operations */}
+          <Route path="orders"     element={<Orders />} />
+          <Route path="customers"  element={<Customers />} />
+          <Route path="coupons"    element={<Reports />} />   {/* placeholder until CouponsPage built */}
+
+          {/* Analytics */}
+          <Route path="reports"    element={<Reports />} />
+          <Route path="revenue"    element={<Reports />} />   {/* placeholder until RevenuePage built */}
+
+          {/* Settings / fallback */}
+          <Route path="settings"   element={<div className="p-8 text-white text-xl">Settings — coming soon</div>} />
+          <Route path="*"          element={<div className="p-8 text-white text-xl">Under Construction</div>} />
+        </Route>
+
+        {/* ── Global fallback ───────────────────────────────────────────── */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </QueryClientProvider>
   );
 }
-
-export default App;

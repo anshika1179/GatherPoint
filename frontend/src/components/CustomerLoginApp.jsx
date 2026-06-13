@@ -150,7 +150,12 @@ export default function CustomerLoginApp() {
   const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '', phone: '' });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('customer');
+      return stored ? JSON.parse(stored) : null;
+    } catch { return null; }
+  });
 
   useEffect(() => {
     const loginWithClerkToken = async () => {
@@ -170,6 +175,7 @@ export default function CustomerLoginApp() {
           if (res.ok) {
             const userData = await res.json();
             setUser(userData);
+            localStorage.setItem('customer', JSON.stringify(userData));
           } else {
             const err = await res.text();
             setMessage(err || 'Failed to authenticate via Google');
@@ -202,6 +208,7 @@ export default function CustomerLoginApp() {
       if (res.ok) {
         const userData = await res.json();
         setUser(userData);
+        localStorage.setItem('customer', JSON.stringify(userData));
         setMessage(`Welcome back, ${userData.name}!`);
       } else {
         const err = await res.text();
@@ -231,6 +238,7 @@ export default function CustomerLoginApp() {
       if (res.ok) {
         const userData = await res.json();
         setUser(userData);
+        localStorage.setItem('customer', JSON.stringify(userData));
         setMessage(`Welcome, ${userData.name}! Your account has been created.`);
       } else {
         const err = await res.text();
@@ -270,9 +278,23 @@ export default function CustomerLoginApp() {
               <div style={{ color: '#8b9691', fontSize: '0.85rem' }}>{user.email}</div>
               {user.phone && <div style={{ color: '#8b9691', fontSize: '0.85rem' }}>{user.phone}</div>}
             </div>
-            <button style={styles.btn} onClick={() => window.location.href = '/booking.html'}>
-              Book a Table
-            </button>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+              <button style={{ ...styles.btn, flex: 1 }} onClick={() => window.location.href = '/customer-order'}>
+                Dashboard
+              </button>
+              <button 
+                style={{ 
+                  ...styles.btn, 
+                  flex: 1, 
+                  background: 'transparent', 
+                  border: '1px solid #cfad56', 
+                  color: '#cfad56' 
+                }} 
+                onClick={() => window.location.href = '/booking.html'}
+              >
+                Book Table
+              </button>
+            </div>
           </div>
         </div>
       </div>

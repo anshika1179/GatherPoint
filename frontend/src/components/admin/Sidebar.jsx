@@ -46,25 +46,25 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     {
       title: 'MANAGEMENT',
       items: [
-        { name: 'Products', icon: Coffee, path: '/admin/products' },
-        { name: 'Categories', icon: ListTree, path: '/admin/categories' },
-        { name: 'Tables', icon: UtensilsCrossed, path: '/admin/tables' },
-        { name: 'Employees', icon: Users, path: '/admin/employees' }
+        { name: 'Products',   icon: Coffee,          path: '/admin/products' },
+        { name: 'Categories', icon: ListTree,         path: '/admin/categories' },
+        { name: 'Tables',     icon: UtensilsCrossed,  path: '/admin/tables' },
+        { name: 'Employees',  icon: Users,            path: '/admin/employees' }
       ]
     },
     {
       title: 'OPERATIONS',
       items: [
-        { name: 'Orders', icon: Receipt, path: '/admin/orders' },
+        { name: 'Orders',    icon: Receipt,   path: '/admin/orders' },
         { name: 'Customers', icon: UserCircle, path: '/admin/customers' },
-        { name: 'Coupons', icon: Ticket, path: '/admin/coupons' }
+        { name: 'Coupons',   icon: Ticket,    path: '/admin/coupons' }
       ]
     },
     {
       title: 'ANALYTICS',
       items: [
         { name: 'Reports', icon: LineChart, path: '/admin/reports' },
-        { name: 'Revenue', icon: PieChart, path: '/admin/revenue' }
+        { name: 'Revenue',  icon: PieChart,  path: '/admin/revenue' }
       ]
     }
   ];

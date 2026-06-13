@@ -129,7 +129,7 @@ export default function StaffPosLogin() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              Staff POS
+              Admin Login
             </h1>
             <p className="text-xs text-white/40 mt-1 tracking-wide">
               Sign in to access the admin panel
@@ -140,10 +140,9 @@ export default function StaffPosLogin() {
         {/* Clerk Sign-In Component */}
         <div className="clerk-staff-login">
           <SignIn
-            routing="path"
-            path="/staff-pos"
+            routing="virtual"
             signUpUrl="/login"
-            fallbackRedirectUrl="/staff-pos"
+            forceRedirectUrl="/staff-pos"
             appearance={{
               elements: {
                 rootBox: "w-full",

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+﻿import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/customer/ProductCard';
 import FloatingCart from '../components/customer/FloatingCart';
@@ -8,7 +8,7 @@ import OrderSuccess from '../components/customer/OrderSuccess';
 import Logo from '../components/customer/Logo';
 import { ShoppingBag, ChevronDown, BookOpen, CreditCard, Trash2, Plus, Minus, Smartphone, Banknote, ArrowRight } from 'lucide-react';
 
-// Deduplicated menu — each item has a unique image
+// Deduplicated menu ΓÇö each item has a unique image
 const menuData = [
   // Coffee
   { id: 1,  category: 'Coffee',     productName: 'Espresso Shot',         description: 'Pure, intense espresso with rich crema.',             price: 100, imageUrl: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '3 mins',  calories: '5 kcal'   },
@@ -156,13 +156,13 @@ const CustomerOrder = () => {
                     {item.imageUrl && item.imageUrl.length > 5 && item.imageUrl.startsWith('http') ? (
                       <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-3xl">☕</div>
+                      <div className="w-full h-full flex items-center justify-center text-3xl">Γÿò</div>
                     )}
                   </div>
                   <div className="flex-grow flex flex-col justify-between">
                     <div>
                       <h4 className="font-bold text-customer-text font-sans text-left">{item.productName}</h4>
-                      <p className="text-sm text-customer-text/60 text-left">₹{item.price}</p>
+                      <p className="text-sm text-customer-text/60 text-left">Γé╣{item.price}</p>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 bg-black/40 rounded-full px-2.5 py-1">
@@ -180,7 +180,7 @@ const CustomerOrder = () => {
                           <Plus size={14} />
                         </button>
                       </div>
-                      <p className="font-bold text-customer-accent font-sans">₹{item.price * item.quantity}</p>
+                      <p className="font-bold text-customer-accent font-sans">Γé╣{item.price * item.quantity}</p>
                     </div>
                   </div>
                   <button 
@@ -196,15 +196,15 @@ const CustomerOrder = () => {
             <div className="p-6 bg-white/5 border border-white/10 rounded-2xl space-y-4">
               <div className="flex justify-between text-customer-text/70">
                 <span>Subtotal</span>
-                <span className="font-sans">₹{subtotal.toFixed(2)}</span>
+                <span className="font-sans">Γé╣{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-customer-text/70">
                 <span>Taxes (5%)</span>
-                <span className="font-sans">₹{(subtotal * 0.05).toFixed(2)}</span>
+                <span className="font-sans">Γé╣{(subtotal * 0.05).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-xl font-bold border-t border-white/10 pt-4 text-customer-text">
                 <span>Total</span>
-                <span className="text-customer-accent font-sans">₹{total.toFixed(2)}</span>
+                <span className="text-customer-accent font-sans">Γé╣{total.toFixed(2)}</span>
               </div>
               <button 
                 onClick={() => setActiveTab('payment')}
@@ -309,7 +309,7 @@ const CustomerOrder = () => {
             <div className="pt-6 border-t border-white/10 flex items-center justify-between">
               <div>
                 <div className="text-sm text-customer-text/70">Total to pay</div>
-                <div className="text-2xl font-bold text-customer-accent font-sans">₹{total.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-customer-accent font-sans">Γé╣{total.toFixed(2)}</div>
               </div>
               <button 
                 type="submit"
@@ -327,7 +327,7 @@ const CustomerOrder = () => {
   return (
     <div className="bg-customer-bg min-h-screen text-customer-text font-sans selection:bg-customer-accent selection:text-customer-bg">
 
-      {/* ── Full-Width Navbar ── */}
+      {/* ΓöÇΓöÇ Full-Width Navbar ΓöÇΓöÇ */}
       <nav className="relative w-full sticky top-0 z-50 bg-customer-bg/95 backdrop-blur-xl border-b border-white/10 shadow-[0_2px_24px_rgba(0,0,0,0.5)]">
         <div className="w-full px-6 lg:px-12 h-[80px] flex items-center justify-between gap-6">
 
@@ -368,7 +368,7 @@ const CustomerOrder = () => {
                   document.getElementById('cart-trigger-btn')?.click();
                 }
               }}
-              className="relative flex items-center gap-2.5 px-9 py-4 rounded-full bg-customer-primary text-customer-text font-black text-lg hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_22px_rgba(45,106,79,0.4)]"
+              className="relative flex items-center justify-center gap-2 px-12 py-3.5 rounded-full bg-customer-primary text-customer-text font-bold text-base hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_18px_rgba(45,106,79,0.35)]"
             >
               <ShoppingBag size={22} />
               <span className="hidden sm:inline">Cart</span>
@@ -390,7 +390,7 @@ const CustomerOrder = () => {
         </div>
       </nav>
 
-      {/* ── Hero Banner ── */}
+      {/* ΓöÇΓöÇ Hero Banner ΓöÇΓöÇ */}
       <AnimatePresence>
         {heroVisible && activeTab === 'product' && (
           <motion.section
@@ -410,7 +410,7 @@ const CustomerOrder = () => {
 
             <div className="relative flex-1 w-full max-w-7xl mx-auto pl-32 pr-10 lg:pl-56 lg:pr-16 flex flex-col lg:flex-row items-center justify-center gap-16">
 
-              {/* ── LEFT: Text ── */}
+              {/* ΓöÇΓöÇ LEFT: Text ΓöÇΓöÇ */}
               <motion.div
                 className="flex-1 text-left z-10"
                 initial={{ opacity: 0, x: -40 }}
@@ -446,7 +446,7 @@ const CustomerOrder = () => {
                 </motion.p>
               </motion.div>
 
-              {/* ── RIGHT: Circular image + floating icon badges ── */}
+              {/* ΓöÇΓöÇ RIGHT: Circular image + floating icon badges ΓöÇΓöÇ */}
               <motion.div
                 className="flex-none flex items-center justify-center relative"
                 initial={{ opacity: 0, x: 50 }}
@@ -473,7 +473,7 @@ const CustomerOrder = () => {
                     <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(7,27,20,0.35), transparent)' }} />
                   </motion.div>
 
-                  {/* Floating badge — leaf / bottom-left */}
+                  {/* Floating badge ΓÇö leaf / bottom-left */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -488,10 +488,10 @@ const CustomerOrder = () => {
                       fontSize: 20,
                     }}
                   >
-                    🌿
+                    ≡ƒî┐
                   </motion.div>
 
-                  {/* Floating badge — coffee cup / top-right */}
+                  {/* Floating badge ΓÇö coffee cup / top-right */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -506,10 +506,10 @@ const CustomerOrder = () => {
                       fontSize: 20,
                     }}
                   >
-                    ☕
+                    Γÿò
                   </motion.div>
 
-                  {/* Floating badge — star / mid-right */}
+                  {/* Floating badge ΓÇö star / mid-right */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -524,7 +524,7 @@ const CustomerOrder = () => {
                       fontSize: 18,
                     }}
                   >
-                    ✨
+                    Γ£¿
                   </motion.div>
                 </div>
               </motion.div>
@@ -533,24 +533,24 @@ const CustomerOrder = () => {
         )}
       </AnimatePresence>
 
-      {/* ── Menu Section ── */}
+      {/* ΓöÇΓöÇ Menu Section ΓöÇΓöÇ */}
       {activeTab === 'product' && (
         <div ref={menuRef} className="w-full">
         {/* Sticky category tabs */}
         <div className="sticky top-[80px] z-40 w-full bg-customer-bg/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
           <div className="w-full pl-32 pr-6 lg:pl-56 lg:pr-12 h-[70px] flex items-center justify-between gap-2">
             {[
-              { label: 'All',         icon: '🍴' },
-              { label: 'Coffee',      icon: '☕' },
-              { label: 'Tea',         icon: '🍵' },
-              { label: 'Burgers',     icon: '🍔' },
-              { label: 'Pizza',       icon: '🍕' },
-              { label: 'Desserts',    icon: '🍰' },
-              { label: 'Pasta',       icon: '🍝' },
-              { label: 'Salads',      icon: '🥗' },
-              { label: 'Steaks',      icon: '🥩' },
-              { label: 'Appetizers',  icon: '🥟' },
-              { label: 'Smoothies',   icon: '🥤' },
+              { label: 'All',         icon: '≡ƒì┤' },
+              { label: 'Coffee',      icon: 'Γÿò' },
+              { label: 'Tea',         icon: '≡ƒì╡' },
+              { label: 'Burgers',     icon: '≡ƒìö' },
+              { label: 'Pizza',       icon: '≡ƒìò' },
+              { label: 'Desserts',    icon: '≡ƒì░' },
+              { label: 'Pasta',       icon: '≡ƒì¥' },
+              { label: 'Salads',      icon: '≡ƒÑù' },
+              { label: 'Steaks',      icon: '≡ƒÑ⌐' },
+              { label: 'Appetizers',  icon: '≡ƒÑƒ' },
+              { label: 'Smoothies',   icon: '≡ƒÑñ' },
             ].map(({ label, icon }) => (
               <motion.button
                 key={label}
@@ -612,7 +612,7 @@ const CustomerOrder = () => {
               animate={{ opacity: 1 }}
               className="flex flex-col items-center justify-center py-24 text-customer-text/40"
             >
-              <span className="text-6xl mb-4">🍽️</span>
+              <span className="text-6xl mb-4">≡ƒì╜∩╕Å</span>
               <p className="text-xl font-semibold">No items in this category</p>
             </motion.div>
           )}
@@ -626,7 +626,7 @@ const CustomerOrder = () => {
       {/* Mobile Payment View */}
       {activeTab === 'payment' && renderMobilePayment()}
 
-      {/* FloatingCart — hidden trigger button for navbar cart button */}
+      {/* FloatingCart ΓÇö hidden trigger button for navbar cart button */}
       <FloatingCart
         cart={cart}
         updateQuantity={updateQuantity}
@@ -655,7 +655,7 @@ const CustomerOrder = () => {
         />
       )}
 
-      {/* ── Bottom Navigation Tab Bar (Mobile Only) ── */}
+      {/* ΓöÇΓöÇ Bottom Navigation Tab Bar (Mobile Only) ΓöÇΓöÇ */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-customer-bg/95 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-around h-[70px] max-w-md mx-auto">
           {/* Product Tab */}
