@@ -7,12 +7,34 @@ import CheckoutModal from '../components/customer/CheckoutModal';
 import OrderSuccess from '../components/customer/OrderSuccess';
 
 const menuData = [
-  { id: 1, category: 'Coffee', productName: 'Cappuccino', description: 'Rich espresso with steamed milk foam. Perfectly balanced.', price: 150, imageUrl: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '120 kcal' },
-  { id: 2, category: 'Coffee', productName: 'Latte', description: 'Smooth espresso with plenty of steamed milk. A morning classic.', price: 180, imageUrl: 'https://images.unsplash.com/photo-1568644396922-5c3bfae12521?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins', calories: '150 kcal' },
-  { id: 3, category: 'Burgers', productName: 'Cheese Burger', description: 'Juicy patty with melted cheese and fresh veggies in a toasted bun.', price: 250, imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '15 mins', calories: '450 kcal' },
-  { id: 4, category: 'Pizza', productName: 'Margherita', description: 'Classic delight with 100% real mozzarella cheese on thin crust.', price: 350, imageUrl: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '20 mins', calories: '600 kcal' },
-  { id: 5, category: 'Tea', productName: 'Masala Chai', description: 'Traditional Indian spiced tea brewed to perfection.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1576092762791-dd9e2220afa1?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '10 mins', calories: '90 kcal' },
-  { id: 6, category: 'Desserts', productName: 'Fudge Brownie', description: 'Warm fudge brownie with a crisp exterior and gooey center.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '350 kcal' },
+  // Coffee
+  { id: 1, category: 'Coffee', productName: 'Espresso Shot', description: 'Pure, intense espresso shot.', price: 100, imageUrl: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '3 mins', calories: '5 kcal' },
+  { id: 2, category: 'Coffee', productName: 'Cappuccino', description: 'Rich espresso with steamed milk foam. Perfectly balanced.', price: 150, imageUrl: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '120 kcal' },
+  { id: 3, category: 'Coffee', productName: 'Classic Latte', description: 'Smooth espresso with plenty of steamed milk.', price: 180, imageUrl: 'https://images.unsplash.com/photo-1568644396922-5c3bfae12521?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins', calories: '150 kcal' },
+  { id: 4, category: 'Coffee', productName: 'Iced Caramel Mocha', description: 'Chilled espresso with chocolate, caramel, and milk.', price: 220, imageUrl: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '7 mins', calories: '280 kcal' },
+  
+  // Tea
+  { id: 5, category: 'Tea', productName: 'Masala Chai', description: 'Traditional Indian spiced tea brewed to perfection.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1576092762791-dd9e2220afa1?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '10 mins', calories: '90 kcal' },
+  { id: 6, category: 'Tea', productName: 'Matcha Green Tea', description: 'Premium Japanese matcha with steamed almond milk.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '5 mins', calories: '60 kcal' },
+  { id: 7, category: 'Tea', productName: 'Peach Iced Tea', description: 'Refreshing iced black tea infused with sweet peach.', price: 140, imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins', calories: '110 kcal' },
+  { id: 8, category: 'Tea', productName: 'Earl Grey Hot', description: 'Classic bergamot infused black tea.', price: 130, imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop', rating: '4.4', prepTime: '5 mins', calories: '2 kcal' },
+
+  // Burgers
+  { id: 9, category: 'Burgers', productName: 'Classic Veg Burger', description: 'Crispy potato patty with fresh lettuce and mayo.', price: 150, imageUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=600&auto=format&fit=crop', rating: '4.3', prepTime: '10 mins', calories: '350 kcal' },
+  { id: 10, category: 'Burgers', productName: 'Cheese Chicken Burger', description: 'Juicy chicken patty with melted cheddar.', price: 250, imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '15 mins', calories: '450 kcal' },
+  { id: 11, category: 'Burgers', productName: 'Spicy Paneer Burger', description: 'Spicy paneer chunk with tandoori mayo.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '12 mins', calories: '400 kcal' },
+  { id: 12, category: 'Burgers', productName: 'Double Beef Smash', description: 'Two smashed patties, double cheese, caramelized onions.', price: 320, imageUrl: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '15 mins', calories: '800 kcal' },
+
+  // Pizza
+  { id: 13, category: 'Pizza', productName: 'Margherita (Veg)', description: 'Classic delight with 100% real mozzarella cheese.', price: 350, imageUrl: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '20 mins', calories: '600 kcal' },
+  { id: 14, category: 'Pizza', productName: 'Farmhouse (Veg)', description: 'Loaded with fresh veggies and mozzarella.', price: 420, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '750 kcal' },
+  { id: 15, category: 'Pizza', productName: 'Pepperoni (Non-Veg)', description: 'Crispy pepperoni slices on a bed of cheese.', price: 480, imageUrl: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '900 kcal' },
+  { id: 16, category: 'Pizza', productName: 'BBQ Chicken (Non-Veg)', description: 'Smoky BBQ chicken, red onions, and cilantro.', price: 460, imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '850 kcal' },
+
+  // Desserts
+  { id: 17, category: 'Desserts', productName: 'Fudge Brownie', description: 'Warm fudge brownie with a crisp exterior.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '350 kcal' },
+  { id: 18, category: 'Desserts', productName: 'New York Cheesecake', description: 'Classic creamy cheesecake with graham cracker crust.', price: 280, imageUrl: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '400 kcal' },
+  { id: 19, category: 'Desserts', productName: 'Classic Tiramisu', description: 'Coffee-flavored Italian dessert.', price: 300, imageUrl: 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '420 kcal' }
 ];
 
 const CustomerOrder = () => {
@@ -79,11 +101,28 @@ const CustomerOrder = () => {
         />
         
         <div className="max-w-[90rem] mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-            {filteredMenu.map(product => (
-              <ProductCard key={product.id} product={product} onAdd={addToCart} />
-            ))}
-          </div>
+          {(() => {
+            const rows = [];
+            let i = 0;
+            let useFour = true;
+            while (i < filteredMenu.length) {
+              const chunkSize = useFour ? 4 : 3;
+              rows.push(filteredMenu.slice(i, i + chunkSize));
+              i += chunkSize;
+              useFour = !useFour;
+            }
+
+            return rows.map((row, index) => (
+              <div 
+                key={index} 
+                className={`grid grid-cols-1 md:grid-cols-2 ${row.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-8 md:gap-10 mb-8 md:mb-10`}
+              >
+                {row.map(product => (
+                  <ProductCard key={product.id} product={product} onAdd={addToCart} />
+                ))}
+              </div>
+            ));
+          })()}
         </div>
       </div>
 

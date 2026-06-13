@@ -40,12 +40,11 @@ const HeroSection = ({ onBrowseClick }) => {
         
         {/* Left Content */}
         <div ref={leftContentRef} className="flex flex-col items-start z-10">
-          <h1 className="font-pinyon text-6xl md:text-8xl text-customer-accent mb-4 drop-shadow-lg">BrewBaithak</h1>
-          <h2 className="text-5xl md:text-7xl font-cinzel font-bold text-customer-text mb-6 leading-tight drop-shadow-xl">
-            Order Fresh.<br />Sip Slow.
-          </h2>
-          <p className="text-lg md:text-xl text-customer-text/80 mb-10 max-w-md font-sans">
-            Crafted coffee and comfort food brought directly to your table with a touch of luxury.
+          <h1 className="text-6xl md:text-8xl font-bold font-sans text-customer-text mb-4 leading-tight">
+            Gather Point
+          </h1>
+          <p className="text-xl md:text-2xl text-customer-text/80 mb-8 max-w-lg font-light leading-relaxed">
+            Connecting tables, people and experience.
           </p>
           <button 
             onClick={onBrowseClick}
