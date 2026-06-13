@@ -43,6 +43,9 @@ const ProductCard = ({ product, onAdd }) => {
       <motion.img
         src={product.imageUrl}
         alt={product.productName}
+        onError={(e) => {
+          e.currentTarget.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop';
+        }}
         whileHover={{ scale: 1.08 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="absolute inset-0 w-full h-full object-cover"

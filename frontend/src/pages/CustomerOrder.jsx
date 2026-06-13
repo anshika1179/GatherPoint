@@ -58,7 +58,7 @@ const menuData = [
   { id: 30, category: 'Appetizers', productName: 'Bruschetta',             description: 'Toasted bread with fresh tomato and basil.',          price: 220, imageUrl: 'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '10 mins', calories: '220 kcal' },
 
   // Smoothies
-  { id: 31, category: 'Smoothies',  productName: 'Berry Blast',            description: 'Mixed wild berries and yogurt blend.',               price: 200, imageUrl: 'https://images.unsplash.com/photo-1553530666-ba11a90a3f88?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins',  calories: '180 kcal' },
+  { id: 31, category: 'Smoothies',  productName: 'Berry Blast',            description: 'Mixed wild berries and yogurt blend.',               price: 200, imageUrl: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins',  calories: '180 kcal' },
   { id: 32, category: 'Smoothies',  productName: 'Mango Tango',            description: 'Alphonso mango, banana and coconut milk blend.',      price: 220, imageUrl: 'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins',  calories: '210 kcal' },
 ];
 
@@ -324,7 +324,7 @@ const CustomerOrder = () => {
       <div ref={menuRef} className="w-full">
         {/* Sticky category tabs */}
         <div className="sticky top-[68px] z-40 w-full bg-customer-bg/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-          <div className="w-full px-4 lg:px-10 py-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <div className="w-full px-4 lg:px-10 py-3 flex items-center gap-3 overflow-x-auto no-scrollbar">
             {[
               { label: 'All',         icon: '🍴' },
               { label: 'Coffee',      icon: '☕' },
@@ -343,7 +343,7 @@ const CustomerOrder = () => {
                 whileHover={{ scale: 1.06 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedCategory(label)}
-                className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                className={`shrink-0 flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   selectedCategory === label
                     ? 'bg-customer-accent text-customer-bg shadow-[0_0_14px_rgba(212,163,115,0.45)]'
                     : 'bg-white/5 text-customer-text/55 border border-white/10 hover:border-customer-accent/40 hover:text-customer-accent hover:bg-customer-accent/5'
