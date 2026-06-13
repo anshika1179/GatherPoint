@@ -157,19 +157,29 @@ function App() {
       showToast('Please select a floor first.', 'error');
       return;
     }
+    
+    const seatsInput = window.prompt("Enter number of seats for the new table:", "4");
+    if (seatsInput === null) return; // User cancelled
+    
+    const seats = parseInt(seatsInput, 10);
+    if (isNaN(seats) || seats <= 0) {
+      showToast('Invalid number of seats entered.', 'error');
+      return;
+    }
+
     const maxTableId = tables.reduce((max, t) => Math.max(max, t.id), 0);
     const maxTableNum = tables.reduce((max, t) => Math.max(max, t.tableNumber), 0);
     
     const newTable = {
       id: maxTableId + 1,
       tableNumber: maxTableNum + 1,
-      seats: 4,
+      seats: seats,
       active: true,
       floor: { id: selectedFloor.id }
     };
     
     setTables([...tables, newTable]);
-    showToast(`Table ${newTable.tableNumber} added to ${selectedFloor.name}`, 'success');
+    showToast(`Table ${newTable.tableNumber} added with ${seats} seats`, 'success');
   };
 
   // Generic Request Helper
