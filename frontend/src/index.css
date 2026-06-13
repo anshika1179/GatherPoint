@@ -265,9 +265,60 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Dashboard / Layouts Grid */
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.top-navbar {
+  height: 70px;
+  background: #0a100d;
+  border-bottom: 1px solid rgba(207, 173, 86, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.top-navbar-brand {
+  font-family: var(--font-calligraphy);
+  font-size: 1.8rem;
+  color: #cfad56;
+  text-shadow: 0 0 10px rgba(207, 173, 86, 0.2);
+}
+
+.top-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.top-navbar-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.profile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0a100d;
+  font-weight: bold;
+}
+
 .layout-container {
   display: flex;
-  min-height: 100vh;
+  flex-grow: 1;
 }
 
 .sidebar {

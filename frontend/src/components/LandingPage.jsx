@@ -38,6 +38,7 @@ export default function LandingPage() {
         this.size = Math.random() * 1.5 + 0.5;
         this.speedY = Math.random() * 0.4 + 0.15;
         this.speedX = (Math.random() - 0.5) * 0.2;
+        // LandingPage component for the animated entrance screen
         this.opacity = Math.random() * 0.4 + 0.1;
         this.pulseSpeed = Math.random() * 0.015 + 0.005;
         this.pulseDir = 1;
@@ -84,6 +85,7 @@ export default function LandingPage() {
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
+  
 
   // GSAP Loading simulation
   useEffect(() => {
