@@ -34,7 +34,14 @@ const menuData = [
   // Desserts
   { id: 17, category: 'Desserts', productName: 'Fudge Brownie', description: 'Warm fudge brownie with a crisp exterior.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '350 kcal' },
   { id: 18, category: 'Desserts', productName: 'New York Cheesecake', description: 'Classic creamy cheesecake with graham cracker crust.', price: 280, imageUrl: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '400 kcal' },
-  { id: 19, category: 'Desserts', productName: 'Classic Tiramisu', description: 'Coffee-flavored Italian dessert.', price: 300, imageUrl: 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '420 kcal' }
+  { id: 19, category: 'Desserts', productName: 'Classic Tiramisu', description: 'Coffee-flavored Italian dessert.', price: 300, imageUrl: 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '420 kcal' },
+
+  // New Additions
+  { id: 20, category: 'Pasta', productName: 'Truffle Mushroom Pasta', description: 'Creamy pasta with black truffle shavings.', price: 450, imageUrl: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '550 kcal' },
+  { id: 21, category: 'Salads', productName: 'Mediterranean Salad', description: 'Fresh greens, feta, olives, and lemon vinaigrette.', price: 300, imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '10 mins', calories: '250 kcal' },
+  { id: 22, category: 'Steaks', productName: 'Ribeye Steak', description: 'Prime cut ribeye with garlic butter.', price: 950, imageUrl: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '25 mins', calories: '850 kcal' },
+  { id: 23, category: 'Appetizers', productName: 'Crispy Calamari', description: 'Lightly fried squid with tartare sauce.', price: 350, imageUrl: 'https://images.unsplash.com/photo-1599487405270-8e12eb23c280?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '15 mins', calories: '400 kcal' },
+  { id: 24, category: 'Smoothies', productName: 'Berry Blast', description: 'Mixed wild berries and yogurt blend.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1628557044797-f21a177c37ec?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '180 kcal' }
 ];
 
 const CustomerOrder = () => {
@@ -94,13 +101,13 @@ const CustomerOrder = () => {
     <div className="bg-customer-bg min-h-screen text-customer-text font-sans selection:bg-customer-accent selection:text-customer-bg">
       <HeroSection onBrowseClick={handleBrowseClick} />
       
-      <div ref={menuRef} className="pb-32">
+      <div ref={menuRef} className="w-full max-w-[1600px] mx-auto px-6 lg:px-12 pb-32">
         <CategoryTabs 
           selectedCategory={selectedCategory} 
           onSelectCategory={setSelectedCategory} 
         />
         
-        <div className="max-w-[90rem] mx-auto px-6 py-12">
+        <div className="w-full py-12 flex flex-col items-center">
           {(() => {
             const rows = [];
             let i = 0;
@@ -115,10 +122,15 @@ const CustomerOrder = () => {
             return rows.map((row, index) => (
               <div 
                 key={index} 
-                className={`grid grid-cols-1 md:grid-cols-2 ${row.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-8 md:gap-10 mb-8 md:mb-10`}
+                className="w-full flex flex-wrap justify-center items-start gap-8 mb-8 md:mb-10"
               >
                 {row.map(product => (
-                  <ProductCard key={product.id} product={product} onAdd={addToCart} />
+                  <div 
+                    key={product.id} 
+                    className={`w-full sm:w-[calc(50%-1rem)] ${row.length === 4 ? 'lg:w-[calc(25%-1.5rem)]' : 'lg:w-[calc(33.333%-1.5rem)]'}`}
+                  >
+                    <ProductCard product={product} onAdd={addToCart} />
+                  </div>
                 ))}
               </div>
             ));
