@@ -1,9 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-customer-bg: #071B14;
+  --color-customer-primary: #2D6A4F;
+  --color-customer-accent: #D4A373;
+  --color-customer-text: #FAF8F1;
+}
+
+html {
+  scroll-behavior: smooth;
+}
 
 :root {
   --font-display: 'Outfit', sans-serif;

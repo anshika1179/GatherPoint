@@ -12,6 +12,12 @@ export default {
           dark: '#050505',
           goldLight: '#F3E5AB',
           goldDark: '#AA7C11',
+        },
+        customer: {
+          bg: '#071B14',
+          primary: '#2D6A4F',
+          accent: '#D4A373',
+          text: '#FAF8F1',
         }
       },
       fontFamily: {
