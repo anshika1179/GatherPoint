@@ -1,4 +1,4 @@
-package com.GatherPoint.backend;
+package com.GatherPoint.backend.Admin;
 
 import com.GatherPoint.backend.Constants.Role;
 import com.GatherPoint.backend.Model.User;
