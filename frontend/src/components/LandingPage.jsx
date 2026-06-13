@@ -142,13 +142,13 @@ export default function LandingPage({ onEnter }) {
       {/* Main Interactive Content Overlays */}
       <div className="relative z-20 flex flex-col items-center justify-center w-full h-full text-center">
         
-        {/* Mask to cover the static mockup "ENTER TERMINAL" button in the center of the table */}
-        <div className="absolute top-[55%] md:top-[60%] w-[180px] md:w-[220px] h-[36px] md:h-[44px] bg-[#0c1510] rounded-full blur-[2px] pointer-events-none" />
-
-        {/* Container positioned exactly over the mockup loading text */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[180px] md:mt-[240px] flex flex-col items-center justify-center z-30">
+        {/* Container positioned below the mockup subtitle text burned into the background image */}
+        <div className="absolute top-[65%] md:top-[68%] left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-8 z-30 w-full">
           
-          {/* Real interactive "ENTER SYSTEM" button designed to hide the mockup text beneath */}
+          {/* Mask to cover the static mockup "LOADING" text in the image if necessary, otherwise the button covers it */}
+          {/* We use a backdrop-blur on the button so it naturally covers what's directly behind it */}
+          
+          {/* Real interactive "ENTER SYSTEM" button */}
           <button
             ref={enterBtnRef}
             onClick={onEnter}
@@ -159,7 +159,7 @@ export default function LandingPage({ onEnter }) {
           </button>
 
           {/* Real Loading bar placed directly below the button */}
-          <div ref={overlayRef} className="absolute top-[100%] mt-8 md:mt-12 flex flex-col items-center justify-center w-[260px] md:w-[360px]">
+          <div ref={overlayRef} className="flex flex-col items-center justify-center w-[260px] md:w-[360px]">
             <div className="w-full h-[2px] bg-[#D4AF37]/15 rounded-full overflow-hidden relative mb-4">
               <div 
                 className="h-full bg-gradient-to-r from-[#8A6623] via-[#D4AF37] to-[#FFF2B2] shadow-[0_0_8px_#D4AF37] transition-all duration-100 ease-out"

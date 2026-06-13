@@ -133,6 +133,7 @@ function App() {
         // Clerk is fully loaded and user is not signed in
         setUser(null);
         setToken(null);
+        setAuthLoading(false);
         setScreen(prev => prev === 'landing' ? 'landing' : 'login');
       }
     };
