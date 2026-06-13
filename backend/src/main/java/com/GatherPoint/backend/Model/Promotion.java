@@ -1,5 +1,7 @@
 package com.GatherPoint.backend.Model;
 
+import com.GatherPoint.backend.Constants.DiscountType;
+import com.GatherPoint.backend.Constants.PromotionScope;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,11 +21,13 @@ public class Promotion {
 
     private String name;
 
-    private String discountType;
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
 
     private BigDecimal discountValue;
 
-    private String scope;
+    @Enumerated(EnumType.STRING)
+    private PromotionScope scope;
 
     private Integer minQuantity;
 

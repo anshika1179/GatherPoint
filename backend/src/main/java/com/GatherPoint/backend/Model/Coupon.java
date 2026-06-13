@@ -1,9 +1,7 @@
 package com.GatherPoint.backend.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.GatherPoint.backend.Constants.DiscountType;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -22,7 +20,8 @@ public class Coupon {
 
     private String code;
 
-    private String discountType;
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
 
     private BigDecimal discountValue;
 

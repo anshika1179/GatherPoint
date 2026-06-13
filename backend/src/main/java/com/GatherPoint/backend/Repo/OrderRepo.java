@@ -7,5 +7,7 @@ import java.util.List;
 
 @Repository
 public interface OrderRepo extends JpaRepository<Order, Long> {
+    List<Order> findByTableId(Long tableId);
+    List<Order> findByOrderNumberContainingIgnoreCase(String orderNumber);
     List<Order> findByEmployeeId(Long employeeId);
 }

@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface RestaurantTableRepo extends JpaRepository<RestaurantTable, Long> {
     List<RestaurantTable> findByFloorId(Long floorId);
+    List<RestaurantTable> findByActiveTrue();
 }

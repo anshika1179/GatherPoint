@@ -1,5 +1,6 @@
 package com.GatherPoint.backend.Model;
 
+import com.GatherPoint.backend.Constants.TicketStage;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,8 @@ public class KitchenTicket {
 
     private String orderNumber;
 
-    private String stage;
+    @Enumerated(EnumType.STRING)
+    private TicketStage stage;
 
     private LocalDateTime createdAt;
 
