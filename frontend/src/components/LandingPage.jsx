@@ -87,13 +87,23 @@ export default function LandingPage({ onEnter }) {
   useEffect(() => {
     // Initial states
     gsap.set(overlayRef.current, { opacity: 0 });
-    gsap.set(enterBtnRef.current, { display: 'none', opacity: 0 });
+    gsap.set(enterBtnRef.current, { opacity: 0, scale: 0.9, y: 10 });
 
     const tl = gsap.timeline();
     tl.to(overlayRef.current, {
       opacity: 1,
       duration: 1.5,
       ease: 'power2.out',
+    });
+
+    // Reveal button independently
+    gsap.to(enterBtnRef.current, {
+      opacity: 1, 
+      scale: 1, 
+      y: 0, 
+      duration: 1.2, 
+      ease: 'back.out(1.5)',
+      delay: 0.8
     });
 
     const loaderObj = { val: 0 };
@@ -106,22 +116,7 @@ export default function LandingPage({ onEnter }) {
       },
       onComplete: () => {
         setLoadingComplete(true);
-        
-        // Transition loader out, show enter button in center of table
-        gsap.to(overlayRef.current, {
-          opacity: 0,
-          y: -15,
-          duration: 0.6,
-          ease: 'power2.in',
-          onComplete: () => {
-            gsap.set(overlayRef.current, { display: 'none' });
-            gsap.set(enterBtnRef.current, { display: 'flex' });
-            gsap.fromTo(enterBtnRef.current, 
-              { opacity: 0, scale: 0.9, y: 10 },
-              { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: 'back.out(1.7)' }
-            );
-          }
-        });
+        // Loader remains visible alongside the button
       }
     });
   }, []);
@@ -145,38 +140,37 @@ export default function LandingPage({ onEnter }) {
       />
 
       {/* Main Interactive Content Overlays */}
-      <div className="relative z-20 flex flex-col items-center justify-center text-center">
+      <div className="relative z-20 flex flex-col items-center justify-center w-full h-full text-center">
         
-        {/* Real Loading bar overlaying mockup loader */}
-        <div 
-          ref={overlayRef} 
-          className="flex flex-col items-center justify-center w-[220px] md:w-[280px] mt-[180px] md:mt-[240px]"
-        >
-          <span className="font-cinzel text-[9px] md:text-[10px] tracking-[0.35em] text-[#D4AF37]/90 uppercase mb-3 animate-pulse">
-            LOADING {progress}%
-          </span>
-          
-          <div className="w-full h-[1.5px] bg-[#D4AF37]/15 rounded-full overflow-hidden relative">
-            <div 
-              className="h-full bg-gradient-to-r from-[#8A6623] via-[#D4AF37] to-[#FFF2B2] shadow-[0_0_6px_#D4AF37] transition-all duration-100 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-
         {/* Mask to cover the static mockup "ENTER TERMINAL" button in the center of the table */}
-        <div className="absolute w-[180px] md:w-[220px] h-[36px] md:h-[44px] bg-[#0c1510] rounded-full blur-[2px] pointer-events-none mt-[70px] md:mt-[90px]" />
+        <div className="absolute top-[55%] md:top-[60%] w-[180px] md:w-[220px] h-[36px] md:h-[44px] bg-[#0c1510] rounded-full blur-[2px] pointer-events-none" />
 
-        {/* Real interactive "ENTER SYSTEM" button which glows and responds to hover, positioned below the subtitle text */}
-        <div className="absolute w-[220px] md:w-[280px] mt-[180px] md:mt-[240px] flex justify-center">
+        {/* Container positioned exactly over the mockup loading text */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[180px] md:mt-[240px] flex flex-col items-center justify-center z-30">
+          
+          {/* Real interactive "ENTER SYSTEM" button designed to hide the mockup text beneath */}
           <button
             ref={enterBtnRef}
             onClick={onEnter}
-            className="hidden items-center justify-center gap-2 px-8 py-3 rounded-full bg-black/90 border border-[#D4AF37] text-[#D4AF37] font-cinzel text-[11px] tracking-[0.25em] font-semibold uppercase hover:bg-[#D4AF37] hover:text-[#050505] shadow-[0_0_20px_rgba(212,175,55,0.15)] hover:shadow-[0_0_35px_rgba(212,175,55,0.5)] transition-all duration-500 transform hover:scale-105 active:scale-95 group cursor-pointer"
+            className="flex items-center justify-center gap-4 w-[310px] md:w-[430px] py-[18px] md:py-[22px] rounded-full bg-[#080d0a]/95 backdrop-blur-md border border-[#D4AF37]/80 text-[#D4AF37] font-cinzel text-[14px] md:text-[16px] tracking-[0.25em] font-bold uppercase hover:bg-[#D4AF37] hover:text-[#050505] shadow-[0_0_30px_rgba(212,175,55,0.25)] hover:shadow-[0_0_50px_rgba(212,175,55,0.6)] transition-all duration-500 transform hover:scale-105 active:scale-95 group cursor-pointer"
           >
             ENTER TERMINAL
-            <ChevronRight size={14} className="transform group-hover:translate-x-1 transition-transform duration-300" />
+            <ChevronRight size={20} className="transform group-hover:translate-x-2 transition-transform duration-300" />
           </button>
+
+          {/* Real Loading bar placed directly below the button */}
+          <div ref={overlayRef} className="absolute top-[100%] mt-8 md:mt-12 flex flex-col items-center justify-center w-[260px] md:w-[360px]">
+            <div className="w-full h-[2px] bg-[#D4AF37]/15 rounded-full overflow-hidden relative mb-4">
+              <div 
+                className="h-full bg-gradient-to-r from-[#8A6623] via-[#D4AF37] to-[#FFF2B2] shadow-[0_0_8px_#D4AF37] transition-all duration-100 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="font-cinzel text-[11px] md:text-[12px] tracking-[0.35em] text-[#D4AF37]/90 uppercase animate-pulse">
+              LOADING {progress}%
+            </span>
+          </div>
+
         </div>
 
       </div>
