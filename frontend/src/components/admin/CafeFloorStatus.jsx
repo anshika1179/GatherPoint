@@ -53,11 +53,14 @@ const CafeFloorStatus = () => {
             key={table.id}
             className={`border rounded-xl p-4 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] cursor-pointer ${getStatusStyle(table.status)}`}
           >
-            <div className="flex justify-between items-start mb-2">
+            {/* Top row: table ID + icon */}
+            <div className="flex justify-between items-start">
               <span className="font-bold text-lg">{table.id}</span>
               <span className="opacity-80">{getStatusIcon(table.status)}</span>
             </div>
-            <div>
+
+            {/* Bottom: centered status + seats */}
+            <div className="flex flex-col items-center text-center mt-4">
               <p className="text-xs font-semibold uppercase tracking-wider">{table.status}</p>
               <p className="text-[10px] opacity-70 mt-1">{table.seats} Seats</p>
             </div>
