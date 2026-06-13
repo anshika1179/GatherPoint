@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/customer/ProductCard';
 import FloatingCart from '../components/customer/FloatingCart';
 import CheckoutModal from '../components/customer/CheckoutModal';
+import ProductDetailModal from '../components/customer/ProductDetailModal';
 import OrderSuccess from '../components/customer/OrderSuccess';
 import Logo from '../components/customer/Logo';
 import { ShoppingBag, ChevronDown } from 'lucide-react';
@@ -68,7 +69,18 @@ const CustomerOrder = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [orderSuccessId, setOrderSuccessId] = useState(null);
   const [heroVisible, setHeroVisible] = useState(true);
+  const [detailProduct, setDetailProduct] = useState(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const menuRef = useRef(null);
+
+  const openProductDetail = (product) => {
+    setDetailProduct(product);
+    setIsDetailOpen(true);
+  };
+
+  const closeProductDetail = () => {
+    setIsDetailOpen(false);
+  };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -382,7 +394,12 @@ const CustomerOrder = () => {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
               {filteredMenu.map(product => (
-                <ProductCard key={product.id} product={product} onAdd={addToCart} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAdd={addToCart}
+                  onClick={openProductDetail}
+                />
               ))}
             </motion.div>
           </AnimatePresence>
@@ -413,6 +430,13 @@ const CustomerOrder = () => {
         onClose={() => setIsCheckoutOpen(false)}
         onConfirm={handleCheckoutConfirm}
         total={total}
+      />
+
+      <ProductDetailModal
+        isOpen={isDetailOpen}
+        onClose={closeProductDetail}
+        product={detailProduct}
+        onAdd={addToCart}
       />
 
       {orderSuccessId && (

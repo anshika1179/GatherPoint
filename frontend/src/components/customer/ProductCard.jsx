@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { Plus, Star, Clock, Flame } from 'lucide-react';
 
-const ProductCard = ({ product, onAdd }) => {
+const ProductCard = ({ product, onAdd, onClick }) => {
   const cardRef = useRef(null);
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
@@ -37,6 +37,7 @@ const ProductCard = ({ product, onAdd }) => {
       transition={{ duration: 0.5, ease: 'easeOut' }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={() => onClick && onClick(product)}
       className="relative mx-auto w-[94%] max-w-[320px] rounded-2xl h-[23rem] overflow-hidden cursor-pointer border border-white/10 hover:border-customer-accent/60 transition-colors duration-500 bg-black/30"
     >
       {/* Background Image */}
