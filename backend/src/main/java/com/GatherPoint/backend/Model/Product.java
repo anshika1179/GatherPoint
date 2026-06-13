@@ -27,6 +27,10 @@ public class Product {
 
     private String description;
 
+    private String imageUrl;
+
+    private boolean available = true;
+
     @ManyToOne
     private Category category;
 }

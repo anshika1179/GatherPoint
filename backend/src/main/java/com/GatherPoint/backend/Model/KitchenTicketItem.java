@@ -22,5 +22,6 @@ public class KitchenTicketItem {
     private boolean completed;
 
     @ManyToOne
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private KitchenTicket ticket;
 }

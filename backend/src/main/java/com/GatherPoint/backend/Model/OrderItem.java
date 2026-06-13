@@ -27,5 +27,6 @@ public class OrderItem {
     private Product product;
 
     @ManyToOne
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Order order;
 }
