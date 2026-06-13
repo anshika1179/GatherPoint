@@ -165,7 +165,7 @@ const CustomerOrder = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.45 }}
-            className="relative w-full overflow-hidden min-h-[calc(100vh-68px)] flex flex-col"
+            className="relative w-full overflow-hidden min-h-[calc(100vh-80px)] flex flex-col"
             style={{ background: '#071B14' }}
           >
             {/* Subtle background glow */}
