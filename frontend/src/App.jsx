@@ -933,7 +933,6 @@ function App() {
       {/* Sidebar Navigation */}
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <Coffee size={32} style={{ color: '#cfad56', strokeWidth: 1.5 }} />
           <span>GatherPoint</span>
         </div>
 
