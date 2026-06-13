@@ -18,10 +18,10 @@ public class AdminComponent implements CommandLineRunner {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${admin.emails}")
+    @Value("${admin.emails:anshika1179@gmail.com}")
     private String adminEmailsRaw;
 
-    @Value("${admin.password}")
+    @Value("${admin.password:admin123}")
     private String adminPassword;
 
     @Override
