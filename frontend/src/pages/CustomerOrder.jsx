@@ -165,148 +165,153 @@ const CustomerOrder = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.45 }}
-            className="relative w-full overflow-hidden"
-            style={{ background: 'linear-gradient(135deg,#071B14 0%,#0d2318 40%,#071B14 100%)' }}
+            className="relative w-full overflow-hidden min-h-[calc(100vh-68px)] flex flex-col"
+            style={{ background: '#071B14' }}
           >
-            {/* Background glow blobs */}
+            {/* Subtle background glow */}
             <div className="pointer-events-none absolute inset-0">
-              <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-customer-primary/10 blur-[120px]" />
-              <div className="absolute -bottom-32 -right-20 w-[400px] h-[400px] rounded-full bg-customer-accent/8 blur-[100px]" />
+              <div className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full bg-customer-primary/8 blur-[160px]" />
+              <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-customer-accent/5 blur-[120px]" />
             </div>
 
-            <div className="relative max-w-7xl mx-auto px-8 lg:px-16 py-16 lg:py-24 flex flex-col lg:flex-row items-center gap-14">
+            <div className="relative flex-1 w-full max-w-7xl mx-auto pl-20 pr-10 lg:pl-40 lg:pr-16 flex flex-col lg:flex-row items-center justify-center gap-16">
 
-              {/* ── LEFT copy ── */}
+              {/* ── LEFT: Text ── */}
               <motion.div
-                className="flex-1 text-center lg:text-left z-10"
-                initial={{ opacity: 0, x: -50 }}
+                className="flex-1 text-left z-10"
+                initial={{ opacity: 0, x: -40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7, ease: 'easeOut' }}
               >
-                <motion.p
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
-                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-customer-accent/80 mb-5 border border-customer-accent/20 rounded-full px-4 py-1.5 bg-customer-accent/5"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-customer-accent animate-pulse" />
-                  Premium Dining Experience
-                </motion.p>
-
+                {/* Big brand title */}
                 <motion.h1
-                  initial={{ opacity: 0, y: 24 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.28, duration: 0.65 }}
-                  className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] mb-6"
-                  style={{ fontFamily: "'Cinzel', serif" }}
+                  transition={{ delay: 0.2, duration: 0.65 }}
+                  className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-5"
+                  style={{ fontFamily: "'Cinzel', serif", color: '#c9a96e' }}
                 >
-                  <span className="text-customer-text">Taste the</span>{' '}
-                  <span className="text-customer-accent">Finest</span>
-                  <br />
-                  <span className="text-customer-text">in Every Bite</span>
+                  Gather Point
+                  <motion.span
+                    animate={{ opacity: [1, 0, 1] }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'steps(1)' }}
+                    className="inline-block w-[4px] h-[0.85em] ml-1 align-middle"
+                    style={{ background: '#c9a96e', verticalAlign: 'middle' }}
+                  />
                 </motion.h1>
 
+                {/* Browse Menu underline link */}
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.42 }}
+                  whileHover={{ x: 4 }}
+                  onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  className="inline-block text-base font-bold tracking-wide mb-6 text-left"
+                  style={{
+                    color: '#e8d5a3',
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '4px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                  }}
+                >
+                  Browse Menu
+                </motion.button>
+
+                {/* Subtitle */}
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.45 }}
-                  className="text-customer-text/60 text-base lg:text-lg max-w-sm mx-auto lg:mx-0 mb-10 leading-relaxed"
-                >
-                  Curated dishes crafted with passion.
-                  Order at your table — skip the wait.
-                </motion.p>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.58 }}
-                  className="flex flex-wrap gap-4 justify-center lg:justify-start"
+                  className="text-lg lg:text-xl leading-relaxed"
+                  style={{ color: 'rgba(255,255,255,0.55)', maxWidth: '420px' }}
                 >
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                    className="px-8 py-4 bg-customer-accent text-customer-bg font-bold rounded-full text-base shadow-[0_0_24px_rgba(212,163,115,0.35)] hover:shadow-[0_0_40px_rgba(212,163,115,0.55)] transition-shadow"
-                  >
-                    🍽️ Explore Menu
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => setHeroVisible(false)}
-                    className="px-8 py-4 border border-white/20 text-customer-text/70 font-semibold rounded-full text-base hover:border-customer-accent/60 hover:text-customer-accent transition-all duration-300"
-                  >
-                    Quick Order ↓
-                  </motion.button>
-                </motion.div>
-
-                {/* Stats row */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.72 }}
-                  className="mt-10 flex items-center gap-8 justify-center lg:justify-start"
-                >
-                  {[
-                    { label: 'Dishes', value: `${menuData.length}+` },
-                    { label: 'Rating', value: '4.9 ⭐' },
-                    { label: 'Avg wait', value: '8 min' },
-                  ].map(stat => (
-                    <div key={stat.label} className="text-center lg:text-left">
-                      <p className="text-2xl font-bold text-customer-accent">{stat.value}</p>
-                      <p className="text-xs text-customer-text/40 uppercase tracking-widest mt-0.5">{stat.label}</p>
-                    </div>
-                  ))}
-                </motion.div>
+                  Connecting tables, people and experiences.
+                </motion.p>
               </motion.div>
 
-              {/* ── RIGHT image ── */}
+              {/* ── RIGHT: Circular image + floating icon badges ── */}
               <motion.div
                 className="flex-none flex items-center justify-center relative"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.7, delay: 0.18, ease: 'easeOut' }}
+                transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
               >
-                {/* Container with known size so badges can be absolutely positioned */}
-                <div className="relative w-72 h-72 lg:w-[380px] lg:h-[380px]">
+                <div className="relative w-80 h-80 lg:w-[480px] lg:h-[480px]">
 
-                  {/* Glow ring */}
-                  <div className="absolute inset-0 rounded-full bg-customer-primary/20 blur-2xl scale-110" />
+                  {/* Outer glow */}
+                  <div className="absolute inset-0 rounded-full blur-2xl scale-110" style={{ background: 'rgba(45,106,79,0.18)' }} />
 
-                  {/* Main image */}
+                  {/* Circular photo */}
                   <motion.div
-                    animate={{ y: [0, -14, 0] }}
-                    transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-                    className="relative w-full h-full rounded-full border-[3px] border-customer-accent/25 overflow-hidden shadow-[0_0_70px_rgba(45,106,79,0.35)]"
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                    className="relative w-full h-full rounded-full overflow-hidden"
+                    style={{ border: '2px solid rgba(201,169,110,0.2)' }}
                   >
                     <img
-                      src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop"
-                      alt="Featured Dish"
-                      className="w-full h-full object-cover scale-105"
+                      src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop"
+                      alt="Gather Point Coffee"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-customer-bg/50 via-transparent to-transparent" />
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(7,27,20,0.35), transparent)' }} />
                   </motion.div>
 
-                  {/* Rating badge — top-right of the image circle */}
+                  {/* Floating badge — leaf / bottom-left */}
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.7, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 0.85, type: 'spring', stiffness: 200 }}
-                    className="absolute -top-3 -right-3 lg:top-0 lg:-right-6 bg-customer-bg/80 backdrop-blur-md border border-customer-accent/30 rounded-2xl px-4 py-2.5 shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.85, type: 'spring', stiffness: 180 }}
+                    className="absolute flex items-center justify-center rounded-full shadow-lg"
+                    style={{
+                      width: 44, height: 44,
+                      bottom: '8%', left: '-8%',
+                      background: 'rgba(13,35,24,0.9)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      backdropFilter: 'blur(10px)',
+                      fontSize: 20,
+                    }}
                   >
-                    <p className="text-[10px] text-customer-text/50 uppercase tracking-wider">Rating</p>
-                    <p className="text-customer-accent font-extrabold text-xl leading-none mt-0.5">4.9 ⭐</p>
+                    🌿
                   </motion.div>
 
-                  {/* Dishes badge — bottom-left of the image circle */}
+                  {/* Floating badge — coffee cup / top-right */}
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.7, y: -10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 1.05, type: 'spring', stiffness: 200 }}
-                    className="absolute -bottom-3 -left-3 lg:bottom-0 lg:-left-6 bg-customer-bg/80 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2.5 shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.0, type: 'spring', stiffness: 180 }}
+                    className="absolute flex items-center justify-center rounded-full shadow-lg"
+                    style={{
+                      width: 44, height: 44,
+                      top: '5%', right: '-6%',
+                      background: 'rgba(13,35,24,0.9)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      backdropFilter: 'blur(10px)',
+                      fontSize: 20,
+                    }}
                   >
-                    <p className="text-[10px] text-customer-text/50 uppercase tracking-wider">Available</p>
-                    <p className="text-white font-extrabold text-xl leading-none mt-0.5">{menuData.length}+ Dishes</p>
+                    ☕
+                  </motion.div>
+
+                  {/* Floating badge — star / mid-right */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.15, type: 'spring', stiffness: 180 }}
+                    className="absolute flex items-center justify-center rounded-full shadow-lg"
+                    style={{
+                      width: 40, height: 40,
+                      top: '38%', right: '-14%',
+                      background: 'rgba(13,35,24,0.9)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      backdropFilter: 'blur(10px)',
+                      fontSize: 18,
+                    }}
+                  >
+                    ✨
                   </motion.div>
                 </div>
               </motion.div>
