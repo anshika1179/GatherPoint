@@ -678,7 +678,8 @@ function App() {
   if (screen === 'login') {
     return (
       <div className="auth-bg">
-        <div className="auth-split-card">
+        <div className="auth-split-card-wrapper">
+          <div className="auth-split-card">
           {/* Left Side: Image with Overlay */}
           <div className="auth-image-side">
             <div className="auth-image-overlay">
@@ -722,6 +723,7 @@ function App() {
             </div>
           </div>
         </div>
+        </div>
       </div>
     );
   }
@@ -730,7 +732,8 @@ function App() {
   if (screen === 'signup') {
     return (
       <div className="auth-bg">
-        <div className="auth-split-card">
+        <div className="auth-split-card-wrapper">
+          <div className="auth-split-card">
           {/* Left Side: Image with Overlay */}
           <div className="auth-image-side">
             <div className="auth-image-overlay">
@@ -793,6 +796,7 @@ function App() {
               Already registered? <span onClick={() => setScreen('login')} className="auth-link">Sign In</span>
             </div>
           </div>
+        </div>
         </div>
       </div>
     );

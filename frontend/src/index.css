@@ -565,18 +565,32 @@ h1, h2, h3, h4, h5, h6 {
   gap: 10px;
 }
 
+.auth-split-card-wrapper {
+  width: 100%;
+  max-width: 900px;
+  padding: 4px; /* Thicker border */
+  border-radius: 26px;
+  background: linear-gradient(60deg, #cfad56, #3e4f45, #cfad56, #1b2e23);
+  background-size: 300% 300%;
+  animation: animatedBorder 4s ease infinite;
+  box-shadow: 0 0 25px rgba(207, 173, 86, 0.4);
+  z-index: 10;
+}
+
+@keyframes animatedBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 /* Auth Split Layout */
 .auth-split-card {
   display: flex;
   width: 100%;
-  max-width: 900px;
   background: #ffffff;
-  border-radius: 24px;
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(207, 173, 86, 0.3);
-  border: 2px solid #cfad56;
   height: 550px;
-  z-index: 10;
 }
 
 .auth-image-side {
