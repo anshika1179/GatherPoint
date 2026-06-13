@@ -25,14 +25,14 @@ const Topbar = () => {
         <div className="text-gray-400 text-sm hidden md:block">
           {currentDate}
         </div>
-        <div className="relative max-w-md w-full">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search size={18} className="text-gray-500" />
+        <div className="relative max-w-md w-full group">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search size={18} className="text-gray-500 group-hover:text-[#D4A373] transition-colors" />
           </div>
           <input 
             type="text" 
             placeholder="Search orders, products, or customers..." 
-            className="w-full bg-[#071B14]/60 backdrop-blur-md border border-[#D4A373]/30 text-[#FAF8F1] rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-[#D4A373] focus:ring-1 focus:ring-[#D4A373] transition-colors placeholder-gray-400 shadow-inner"
+            className="w-full h-11 bg-[#0A261C]/40 backdrop-blur-xl border border-[#D4A373]/20 text-[#FAF8F1] rounded-xl pl-12 pr-4 hover:border-[#D4A373]/40 focus:outline-none focus:border-[#D4A373] focus:ring-1 focus:ring-[#D4A373] transition-all duration-300 placeholder-gray-400 shadow-[0_4px_16px_rgba(0,0,0,0.2)]"
           />
         </div>
       </div>

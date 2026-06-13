@@ -51,15 +51,15 @@ const CafeFloorStatus = () => {
         {tables.map((table) => (
           <div 
             key={table.id}
-            className={`border rounded-xl p-4 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] cursor-pointer ${getStatusStyle(table.status)}`}
+            className={`border rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer ${getStatusStyle(table.status)}`}
           >
-            <div className="flex justify-between items-start mb-2">
-              <span className="font-bold text-lg">{table.id}</span>
+            <div className="flex justify-between items-start mb-4">
+              <span className="font-black text-2xl tracking-tight">{table.id}</span>
               <span className="opacity-80">{getStatusIcon(table.status)}</span>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider">{table.status}</p>
-              <p className="text-[10px] opacity-70 mt-1">{table.seats} Seats</p>
+              <p className="text-xs font-bold uppercase tracking-widest">{table.status}</p>
+              <p className="text-[11px] font-medium opacity-80 mt-1.5">{table.seats} Seats</p>
             </div>
           </div>
         ))}

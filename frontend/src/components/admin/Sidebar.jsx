@@ -103,22 +103,22 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 py-8 px-5 space-y-10">
+      <nav className="flex-1 py-8 px-5 space-y-16">
         {menuSections.map((section, idx) => (
           <div key={idx}>
             {!isCollapsed && (
-              <h3 className="text-xs font-bold text-[#D4A373]/70 uppercase tracking-[0.2em] mb-4 px-2">
+              <h3 className="text-xs font-bold text-[#D4A373]/70 uppercase tracking-[0.2em] mb-8 px-2">
                 {section.title}
               </h3>
             )}
-            <div className="space-y-2">
+            <div className="space-y-6">
               {section.items.map((item, itemIdx) => (
                 <NavLink
                   key={itemIdx}
                   to={item.path}
                   title={isCollapsed ? item.name : ''}
                   className={({ isActive }) =>
-                    `flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 ${
+                    `flex items-center gap-4 px-5 py-[1.125rem] rounded-xl transition-all duration-300 ${
                       isActive 
                         ? 'bg-[#2D6A4F]/30 text-[#D4A373] shadow-inner border border-[#D4A373]/10' 
                         : 'text-gray-400 hover:bg-[#2D6A4F]/15 hover:text-[#FAF8F1]'

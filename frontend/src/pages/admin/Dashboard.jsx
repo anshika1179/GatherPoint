@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { motion } from 'framer-motion';
 import { ShoppingBag, DollarSign, Users, Utensils } from 'lucide-react';
 import StatsCard from '../../components/admin/StatsCard';
 import OrdersTable from '../../components/admin/OrdersTable';
@@ -31,6 +32,14 @@ const Dashboard = () => {
   const formatTime = (date) => {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
+
+  const getGreeting = (date) => {
+    const hour = date.getHours();
+    if (hour < 12) return 'Good Morning, Admin';
+    if (hour < 17) return 'Good Afternoon, Admin';
+    return 'Good Evening, Admin';
+  };
+
   // Dummy Data
   const recentOrders = [
     { id: '1042', customer: 'Rahul Sharma', table: '4', amount: 850, status: 'Completed' },
@@ -48,22 +57,32 @@ const Dashboard = () => {
   ];
 
   const chartData = [40, 70, 45, 90, 65, 85, 120];
+  const maxVal = Math.max(...chartData);
+  const chartHeight = 220;
+  const chartWidth = 800;
+  const chartPoints = chartData.map((val, i) => {
+    const x = (i / (chartData.length - 1)) * chartWidth;
+    const y = chartHeight - (val / maxVal) * chartHeight * 0.85;
+    return { x, y };
+  });
+  const linePath = `M ${chartPoints.map(p => `${p.x},${p.y}`).join(' L ')}`;
+  const areaPath = `${linePath} L ${chartWidth},${chartHeight} L 0,${chartHeight} Z`;
 
   return (
-    <div ref={dashboardRef} className="space-y-8 pb-12">
+    <div ref={dashboardRef} className="flex flex-col gap-8 pb-12">
       {/* SECTION 1: Header & Clock */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-[#0A261C]/40 backdrop-blur-sm p-6 rounded-[24px] border border-[#D4A373]/10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-[#0A261C]/40 backdrop-blur-sm p-6 md:p-8 rounded-[24px] border border-[#D4A373]/10">
         <div>
-          <h1 className="text-3xl font-bold text-[#FAF8F1] font-serif tracking-wide">Good Morning, Admin</h1>
-          <p className="text-gray-400 text-sm mt-2 tracking-wide">Manage your cafe operations from one central hub.</p>
+          <h1 className="text-4xl font-bold text-[#FAF8F1] font-serif tracking-wide">{getGreeting(time)}</h1>
+          <p className="text-gray-400 text-base mt-4 tracking-wide">Manage your cafe operations from one central hub.</p>
         </div>
         <div className="text-right">
           <p className="text-[#D4A373] font-semibold tracking-widest uppercase text-sm mb-1">{formatDate(time)}</p>
-          <p className="text-2xl font-bold font-serif text-[#FAF8F1] tracking-wider">{formatTime(time)}</p>
+          <p className="text-xl font-bold font-serif text-[#FAF8F1] tracking-wider">{formatTime(time)}</p>
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* SECTION 2: Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard 
           title="Total Revenue" 
@@ -101,17 +120,15 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* SECTION 7: Quick Actions */}
+      {/* SECTION 3: Quick Actions */}
       <QuickActions />
 
-      {/* Main Content Grid */}
+      {/* SECTION 4: Revenue Trend + Floor Status Row */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         
-        {/* Left Column (Chart + Orders) */}
-        <div className="xl:col-span-2 space-y-8">
-          
-          {/* SECTION 6: Sales Analytics Chart (CSS Dummy) */}
-          <div className="bg-[#0A261C]/60 backdrop-blur-md border border-[#D4A373]/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-6 rounded-[24px]">
+        {/* Sales Analytics Chart (Left, 2 columns) */}
+        <div className="xl:col-span-2">
+          <div className="bg-[#0A261C]/60 backdrop-blur-md border border-[#D4A373]/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-6 rounded-[24px] h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-[#FAF8F1] font-semibold font-serif text-xl tracking-wide">Revenue Trend</h2>
               <div className="flex gap-2 bg-[#071B14] p-1 rounded-lg border border-[#D4A373]/20">
@@ -121,53 +138,115 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <div className="h-64 w-full flex items-end justify-between gap-2 md:gap-4 mt-8 px-2 md:px-6">
-              {chartData.map((height, i) => (
-                <div key={i} className="w-full flex flex-col items-center gap-3 group">
-                  <div 
-                    className="w-full bg-[#2D6A4F]/40 hover:bg-[#D4A373] rounded-t-sm transition-all duration-300 relative"
-                    style={{ height: `${height}%`, maxHeight: '100%' }}
-                  >
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#D4A373] text-[#071B14] text-xs font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                      ₹{height * 1000}
-                    </div>
-                  </div>
-                  <span className="text-gray-500 text-xs font-medium">Day {i+1}</span>
-                </div>
-              ))}
+            <div className="relative h-[260px] w-full mt-auto px-4">
+              <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 40}`} className="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#D4A373" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#D4A373" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                
+                {/* Animated Fill Area */}
+                <motion.path
+                  d={areaPath}
+                  fill="url(#areaGradient)"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.5 }}
+                />
+                
+                {/* Animated Line */}
+                <motion.path
+                  d={linePath}
+                  fill="none"
+                  stroke="#D4A373"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 1.5, ease: 'easeOut' }}
+                />
+
+                {/* Points and Tooltips */}
+                {chartPoints.map((p, i) => (
+                  <g key={i} className="group">
+                    <motion.circle
+                      cx={p.x}
+                      cy={p.y}
+                      r="6"
+                      fill="#071B14"
+                      stroke="#D4A373"
+                      strokeWidth="3"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1 + i * 0.1, type: "spring" }}
+                      className="cursor-pointer transition-all duration-300 group-hover:r-8"
+                    />
+                    <text 
+                      x={p.x} 
+                      y={p.y - 20} 
+                      fill="#FAF8F1" 
+                      fontSize="14" 
+                      fontWeight="bold" 
+                      textAnchor="middle"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-md"
+                    >
+                      ₹{chartData[i] * 1000}
+                    </text>
+                    <text 
+                      x={p.x} 
+                      y={chartHeight + 25} 
+                      fill="#9CA3AF" 
+                      fontSize="13" 
+                      fontWeight="500" 
+                      textAnchor="middle"
+                    >
+                      Day {i+1}
+                    </text>
+                  </g>
+                ))}
+              </svg>
             </div>
           </div>
+        </div>
 
-          {/* SECTION 4: Recent Orders */}
-          <div className="bg-[#0A261C]/60 backdrop-blur-md border border-[#D4A373]/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] rounded-[24px]">
+        {/* Cafe Floor Status (Right, 1 column) */}
+        <div className="xl:col-span-1">
+          <CafeFloorStatus />
+        </div>
+      </div>
+
+      {/* SECTION 5: Recent Orders + Top Products Row */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        
+        {/* Recent Orders (Left, 2 columns) */}
+        <div className="xl:col-span-2">
+          <div className="bg-[#0A261C]/60 backdrop-blur-md border border-[#D4A373]/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] rounded-[24px] h-full flex flex-col">
             <div className="p-6 border-b border-[#D4A373]/10 flex justify-between items-center">
               <h2 className="text-[#FAF8F1] font-semibold font-serif text-xl tracking-wide">Recent Orders</h2>
               <button className="text-[#D4A373] hover:text-white text-sm font-medium transition-colors hover:underline">
                 View All
               </button>
             </div>
-            <div className="p-2">
+            <div className="p-2 flex-1">
               <OrdersTable orders={recentOrders} />
             </div>
           </div>
-
         </div>
 
-        {/* Right Column (Floor + Products) */}
-        <div className="space-y-8">
-          {/* SECTION 3: Cafe Floor Status */}
-          <CafeFloorStatus />
-
-          {/* SECTION 5: Top Products */}
-          <div className="bg-[#0A261C]/60 backdrop-blur-md border border-[#D4A373]/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-6 rounded-[24px] h-fit">
+        {/* Top Products (Right, 1 column) */}
+        <div className="xl:col-span-1">
+          <div className="bg-[#0A261C]/60 backdrop-blur-md border border-[#D4A373]/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-6 rounded-[24px] h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-[#FAF8F1] font-semibold font-serif text-xl tracking-wide">Top Products</h2>
             </div>
             <ProductList products={topProducts} />
           </div>
         </div>
-
       </div>
+
     </div>
   );
 };

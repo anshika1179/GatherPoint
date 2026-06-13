@@ -37,15 +37,15 @@ const OrdersTable = ({ orders }) => {
           {orders.map((order, index) => (
             <tr 
               key={order.id} 
-              className="border-b border-[#2D6A4F]/10 hover:bg-[#2D6A4F]/5 transition-colors"
+              className="border-b border-[#2D6A4F]/10 hover:bg-[#2D6A4F]/20 transition-colors cursor-pointer"
             >
-              <td className="px-6 py-4 text-[#FAF8F1] font-medium">#{order.id}</td>
-              <td className="px-6 py-4 text-gray-300">{order.customer}</td>
-              <td className="px-6 py-4 text-gray-300">T-{order.table}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#FAF8F1]">
+              <td className="px-6 py-5 text-[#FAF8F1] font-medium">#{order.id}</td>
+              <td className="px-6 py-5 text-gray-300">{order.customer}</td>
+              <td className="px-6 py-5 text-gray-300">T-{order.table}</td>
+              <td className="px-6 py-5 whitespace-nowrap text-sm font-medium text-[#FAF8F1]">
                 ₹{order.amount}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-6 py-5 whitespace-nowrap">
                 {getStatusBadge(order.status)}
               </td>
             </tr>

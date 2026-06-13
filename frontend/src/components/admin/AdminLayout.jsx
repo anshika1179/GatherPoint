@@ -35,8 +35,8 @@ const AdminLayout = () => {
         <Topbar />
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-6 scrollbar-hide">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto px-6 md:px-8 py-6 md:py-8 scrollbar-hide">
+          <div className="max-w-[1400px] mx-auto">
             <Outlet />
           </div>
         </main>
