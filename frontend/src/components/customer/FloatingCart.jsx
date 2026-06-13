@@ -22,9 +22,10 @@ const FloatingCart = ({ cart, updateQuantity, removeItem, onCheckout }) => {
 
   return (
     <>
-      {/* Top Right Floating Button */}
-      <div className="fixed top-6 right-6 z-50">
-        <button 
+      {/* Top Right Floating Button — hidden since navbar has cart, kept as programmatic trigger */}
+      <div className="fixed top-20 right-6 z-50">
+        <button
+          id="cart-trigger-btn"
           onClick={() => setIsOpen(true)}
           className="relative bg-customer-primary text-customer-text p-4 rounded-full shadow-[0_0_20px_rgba(45,106,79,0.4)] hover:bg-customer-accent hover:text-customer-bg hover:shadow-[0_0_25px_rgba(212,163,115,0.5)] transition-all duration-300 group"
         >

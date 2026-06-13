@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ChevronRight, Shield, User, Menu, X } from 'lucide-react';
+import Logo from './customer/Logo';
 
 export default function LandingPage({ onEnter }) {
   const navigate = useNavigate();
@@ -139,9 +140,7 @@ export default function LandingPage({ onEnter }) {
       {/* Premium Navbar */}
       <nav ref={navbarRef} className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 flex items-center justify-between" style={{ background: 'rgba(2, 4, 3, 0.75)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(207, 173, 86, 0.12)' }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FFF2B2] via-[#D4AF37] to-[#8A6623] flex items-center justify-center shadow-[0_0_12px_rgba(212,175,55,0.3)]">
-            <span className="text-[#020403] font-bold text-sm">G</span>
-          </div>
+          <Logo className="w-10 h-10" />
           <span className="font-cinzel text-lg tracking-[0.15em] text-[#D4AF37] font-bold" style={{ fontFamily: "'Great Vibes', cursive", fontSize: '1.5rem' }}>GatherPoint</span>
         </div>
 

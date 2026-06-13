@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import Logo from './customer/Logo';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
@@ -19,8 +20,9 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-gray-900 text-white flex">
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
-        <div className="p-6 border-b border-gray-700">
-          <h1 className="text-xl font-bold text-green-500">GatherPoint</h1>
+        <div className="p-6 border-b border-gray-700 flex items-center gap-3">
+          <Logo className="w-9 h-9" />
+          <h1 className="text-xl font-bold text-green-500 font-cinzel">GatherPoint</h1>
         </div>
         
         <nav className="flex-1 p-4 space-y-2">

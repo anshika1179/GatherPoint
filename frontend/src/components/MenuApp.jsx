@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Logo from './customer/Logo';
 
 const API_BASE_URL = 'http://localhost:8080/api/public';
 
@@ -325,7 +326,10 @@ export default function MenuApp() {
     <div style={mStyles.container}>
       <div style={mStyles.header}>
         <div style={mStyles.headerTop}>
-          <div style={mStyles.brandName}>GatherPoint</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Logo className="w-8 h-8" />
+            <div style={mStyles.brandName}>GatherPoint</div>
+          </div>
           {tableId && <div style={mStyles.tableBadge}>Table {tableId}</div>}
         </div>
         <div style={mStyles.categoryBar}>

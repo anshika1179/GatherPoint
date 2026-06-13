@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import useAuth from '../hooks/useAuth';
 import { validators } from '../utils/validators';
+import Logo from './customer/Logo';
 
 export default function CustomerLoginPage() {
   const { login, signup } = useAuth();
@@ -131,7 +132,8 @@ export default function CustomerLoginPage() {
         <div className="auth-split-card">
           {/* Left Brand Image Side */}
           <div className="auth-image-side">
-            <div className="auth-image-overlay">
+            <div className="auth-image-overlay flex flex-col items-center justify-center gap-4">
+              <Logo className="w-24 h-24 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)] animate-pulse" />
               <div className="auth-brand-text font-cinzel">GatherPoint</div>
             </div>
           </div>

@@ -1,35 +1,40 @@
+// CategoryTabs is now rendered inline in CustomerOrder for precise sticky positioning.
+// This file is kept as a standalone component for other uses.
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const categories = ['All', 'Coffee', 'Tea', 'Burgers', 'Pizza', 'Desserts', 'Pasta', 'Salads', 'Steaks', 'Appetizers', 'Smoothies'];
+const ALL_CATEGORIES = ['All','Coffee','Tea','Burgers','Pizza','Desserts','Pasta','Salads','Steaks','Appetizers','Smoothies'];
 
 const CategoryTabs = ({ selectedCategory, onSelectCategory }) => {
   const tabsRef = useRef(null);
 
   useEffect(() => {
-    gsap.fromTo(tabsRef.current.children,
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: "back.out(1.5)", delay: 0.6 }
-    );
+    if (tabsRef.current) {
+      gsap.fromTo(
+        tabsRef.current.children,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.04, ease: 'back.out(1.5)', delay: 0.3 }
+      );
+    }
   }, []);
 
   return (
-    <div className="sticky top-0 z-40 bg-customer-bg/80 backdrop-blur-lg py-4 w-full z-40">
-      <div 
-        ref={tabsRef} 
-        className="flex flex-row items-center justify-start md:justify-center overflow-x-auto md:overflow-x-visible md:flex-wrap snap-x snap-mandatory no-scrollbar gap-3 md:gap-4 pb-2 lg:pb-0 w-full px-4"
+    <div className="w-full bg-customer-bg/90 backdrop-blur-xl border-b border-white/10 py-3">
+      <div
+        ref={tabsRef}
+        className="w-full flex items-center gap-3 overflow-x-auto no-scrollbar px-4 lg:px-8"
       >
-        {categories.map(category => (
+        {ALL_CATEGORIES.map(cat => (
           <button
-            key={category}
-            onClick={() => onSelectCategory(category)}
-            className={`snap-center shrink-0 px-6 py-2 md:px-8 md:py-3 rounded-full text-base md:text-lg font-semibold transition-all duration-300 whitespace-nowrap ${
-              selectedCategory === category
-                ? 'bg-customer-accent text-customer-bg shadow-[0_0_15px_rgba(212,163,115,0.4)]'
-                : 'bg-white/5 text-customer-text/70 border border-white/10 hover:border-customer-accent hover:text-customer-accent hover:bg-white/10'
+            key={cat}
+            onClick={() => onSelectCategory(cat)}
+            className={`shrink-0 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+              selectedCategory === cat
+                ? 'bg-customer-accent text-customer-bg shadow-[0_0_12px_rgba(212,163,115,0.4)]'
+                : 'bg-white/5 text-customer-text/60 border border-white/10 hover:border-customer-accent/50 hover:text-customer-accent'
             }`}
           >
-            {category}
+            {cat}
           </button>
         ))}
       </div>

@@ -1,59 +1,65 @@
 import { useState, useRef } from 'react';
-import HeroSection from '../components/customer/HeroSection';
-import CategoryTabs from '../components/customer/CategoryTabs';
+import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/customer/ProductCard';
 import FloatingCart from '../components/customer/FloatingCart';
 import CheckoutModal from '../components/customer/CheckoutModal';
 import OrderSuccess from '../components/customer/OrderSuccess';
+import Logo from '../components/customer/Logo';
+import { ShoppingBag, ChevronDown } from 'lucide-react';
 
+// Deduplicated menu — each item has a unique image
 const menuData = [
   // Coffee
-  { id: 1, category: 'Coffee', productName: 'Espresso Shot', description: 'Pure, intense espresso shot.', price: 100, imageUrl: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '3 mins', calories: '5 kcal' },
-  { id: 2, category: 'Coffee', productName: 'Cappuccino', description: 'Rich espresso with steamed milk foam. Perfectly balanced.', price: 150, imageUrl: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '120 kcal' },
-  { id: 3, category: 'Coffee', productName: 'Classic Latte', description: 'Smooth espresso with plenty of steamed milk.', price: 180, imageUrl: 'https://images.unsplash.com/photo-1568644396922-5c3bfae12521?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins', calories: '150 kcal' },
-  { id: 4, category: 'Coffee', productName: 'Iced Caramel Mocha', description: 'Chilled espresso with chocolate, caramel, and milk.', price: 220, imageUrl: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '7 mins', calories: '280 kcal' },
-  
+  { id: 1,  category: 'Coffee',     productName: 'Espresso Shot',         description: 'Pure, intense espresso with rich crema.',             price: 100, imageUrl: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '3 mins',  calories: '5 kcal'   },
+  { id: 2,  category: 'Coffee',     productName: 'Cappuccino',             description: 'Rich espresso with velvety steamed milk foam.',        price: 150, imageUrl: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins',  calories: '120 kcal' },
+  { id: 3,  category: 'Coffee',     productName: 'Classic Latte',          description: 'Smooth espresso layered with steamed milk.',           price: 180, imageUrl: 'https://images.unsplash.com/photo-1568644396922-5c3bfae12521?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins',  calories: '150 kcal' },
+  { id: 4,  category: 'Coffee',     productName: 'Iced Caramel Mocha',     description: 'Chilled espresso with chocolate, caramel & milk.',    price: 220, imageUrl: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '7 mins',  calories: '280 kcal' },
+
   // Tea
-  { id: 5, category: 'Tea', productName: 'Masala Chai', description: 'Traditional Indian spiced tea brewed to perfection.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '10 mins', calories: '90 kcal' },
-  { id: 6, category: 'Tea', productName: 'Matcha Green Tea', description: 'Premium Japanese matcha with steamed almond milk.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '5 mins', calories: '60 kcal' },
-  { id: 7, category: 'Tea', productName: 'Peach Iced Tea', description: 'Refreshing iced black tea infused with sweet peach.', price: 140, imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins', calories: '110 kcal' },
-  { id: 8, category: 'Tea', productName: 'Earl Grey Hot', description: 'Classic bergamot infused black tea.', price: 130, imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop', rating: '4.4', prepTime: '5 mins', calories: '2 kcal' },
-  { id: 101, category: 'Tea', productName: 'Lemon Ginger Tea', description: 'Soothing blend of lemon and ginger.', price: 130, imageUrl: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '5 mins', calories: '5 kcal' },
-  { id: 102, category: 'Tea', productName: 'Jasmine Green Tea', description: 'Light green tea with floral jasmine notes.', price: 150, imageUrl: 'https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '2 kcal' },
-  { id: 103, category: 'Tea', productName: 'Peppermint Tea', description: 'Caffeine-free refreshing mint tea.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins', calories: '0 kcal' },
-  { id: 104, category: 'Tea', productName: 'Chamomile Relaxer', description: 'Calming chamomile flowers steeped gently.', price: 140, imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '7 mins', calories: '2 kcal' },
-  { id: 105, category: 'Tea', productName: 'Hibiscus Iced Tea', description: 'Tart and vibrant chilled hibiscus.', price: 160, imageUrl: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '40 kcal' },
-  { id: 106, category: 'Tea', productName: 'Oolong Classic', description: 'Partially oxidized traditional Chinese tea.', price: 180, imageUrl: 'https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '8 mins', calories: '5 kcal' },
+  { id: 5,  category: 'Tea',        productName: 'Masala Chai',            description: 'Traditional Indian spiced tea brewed perfectly.',     price: 120, imageUrl: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '10 mins', calories: '90 kcal'  },
+  { id: 6,  category: 'Tea',        productName: 'Matcha Green Tea',       description: 'Premium Japanese matcha with almond milk.',           price: 200, imageUrl: 'https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '5 mins',  calories: '60 kcal'  },
+  { id: 7,  category: 'Tea',        productName: 'Peach Iced Tea',         description: 'Refreshing black tea with sweet peach infusion.',     price: 140, imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins',  calories: '110 kcal' },
+  { id: 8,  category: 'Tea',        productName: 'Earl Grey',              description: 'Classic bergamot-infused black tea, served hot.',     price: 130, imageUrl: 'https://images.unsplash.com/photo-1564890369478-c89ca3d7b1d2?q=80&w=600&auto=format&fit=crop', rating: '4.4', prepTime: '5 mins',  calories: '2 kcal'   },
+  { id: 9,  category: 'Tea',        productName: 'Hibiscus Iced Tea',      description: 'Tart and vibrant chilled hibiscus blend.',            price: 160, imageUrl: 'https://images.unsplash.com/photo-1499638673689-79a0b5115d87?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins',  calories: '40 kcal'  },
 
   // Burgers
-  { id: 9, category: 'Burgers', productName: 'Classic Veg Burger', description: 'Crispy potato patty with fresh lettuce and mayo.', price: 150, imageUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=600&auto=format&fit=crop', rating: '4.3', prepTime: '10 mins', calories: '350 kcal' },
-  { id: 10, category: 'Burgers', productName: 'Cheese Chicken Burger', description: 'Juicy chicken patty with melted cheddar.', price: 250, imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '15 mins', calories: '450 kcal' },
-  { id: 11, category: 'Burgers', productName: 'Spicy Paneer Burger', description: 'Spicy paneer chunk with tandoori mayo.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '12 mins', calories: '400 kcal' },
-  { id: 12, category: 'Burgers', productName: 'Double Beef Smash', description: 'Two smashed patties, double cheese, caramelized onions.', price: 320, imageUrl: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '15 mins', calories: '800 kcal' },
+  { id: 10, category: 'Burgers',    productName: 'Classic Veg Burger',     description: 'Crispy potato patty with lettuce and mayo.',          price: 150, imageUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=600&auto=format&fit=crop', rating: '4.3', prepTime: '10 mins', calories: '350 kcal' },
+  { id: 11, category: 'Burgers',    productName: 'Cheese Chicken Burger',  description: 'Juicy chicken patty with melted cheddar cheese.',     price: 250, imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '15 mins', calories: '450 kcal' },
+  { id: 12, category: 'Burgers',    productName: 'Spicy Paneer Burger',    description: 'Paneer chunk with tandoori mayo and crispy onions.',  price: 200, imageUrl: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '12 mins', calories: '400 kcal' },
+  { id: 13, category: 'Burgers',    productName: 'Double Beef Smash',      description: 'Two smashed patties, double cheese, caramelised onions.', price: 320, imageUrl: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '15 mins', calories: '800 kcal' },
 
   // Pizza
-  { id: 13, category: 'Pizza', productName: 'Margherita (Veg)', description: 'Classic delight with 100% real mozzarella cheese.', price: 350, imageUrl: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '20 mins', calories: '600 kcal' },
-  { id: 14, category: 'Pizza', productName: 'Farmhouse (Veg)', description: 'Loaded with fresh veggies and mozzarella.', price: 420, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '750 kcal' },
-  { id: 15, category: 'Pizza', productName: 'Pepperoni (Non-Veg)', description: 'Crispy pepperoni slices on a bed of cheese.', price: 480, imageUrl: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '900 kcal' },
-  { id: 16, category: 'Pizza', productName: 'BBQ Chicken (Non-Veg)', description: 'Smoky BBQ chicken, red onions, and cilantro.', price: 460, imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '850 kcal' },
-  { id: 107, category: 'Pizza', productName: 'Four Cheese (Veg)', description: 'Mozzarella, Cheddar, Parmesan, and Gouda.', price: 500, imageUrl: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '850 kcal' },
-  { id: 108, category: 'Pizza', productName: 'Mushroom Truffle (Veg)', description: 'Earthy mushrooms and truffle oil.', price: 480, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '700 kcal' },
-  { id: 109, category: 'Pizza', productName: 'Hawaiian (Non-Veg)', description: 'Classic ham and pineapple with mozzarella.', price: 450, imageUrl: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '20 mins', calories: '780 kcal' },
-  { id: 110, category: 'Pizza', productName: 'Meat Lovers (Non-Veg)', description: 'Loaded with pepperoni, sausage, and bacon.', price: 550, imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '25 mins', calories: '1100 kcal' },
-  { id: 111, category: 'Pizza', productName: 'Paneer Tikka (Veg)', description: 'Spicy paneer chunks with bell peppers.', price: 430, imageUrl: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '20 mins', calories: '800 kcal' },
-  { id: 112, category: 'Pizza', productName: 'Spicy Chicken Sausage (Non-Veg)', description: 'Sliced chicken sausage with jalapenos.', price: 470, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '20 mins', calories: '820 kcal' },
+  { id: 14, category: 'Pizza',      productName: 'Margherita',             description: 'Classic mozzarella and fresh basil on tomato.',       price: 350, imageUrl: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '20 mins', calories: '600 kcal' },
+  { id: 15, category: 'Pizza',      productName: 'Farmhouse Veg',          description: 'Loaded with fresh seasonal vegetables and cheese.',   price: 420, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '750 kcal' },
+  { id: 16, category: 'Pizza',      productName: 'Pepperoni',              description: 'Crispy pepperoni slices on a rich cheese bed.',       price: 480, imageUrl: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '900 kcal' },
+  { id: 17, category: 'Pizza',      productName: 'BBQ Chicken',            description: 'Smoky BBQ chicken with red onions and cilantro.',     price: 460, imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '850 kcal' },
+  { id: 18, category: 'Pizza',      productName: 'Four Cheese',            description: 'Mozzarella, Cheddar, Parmesan and Gouda blend.',      price: 500, imageUrl: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '850 kcal' },
 
   // Desserts
-  { id: 17, category: 'Desserts', productName: 'Fudge Brownie', description: 'Warm fudge brownie with a crisp exterior.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '350 kcal' },
-  { id: 18, category: 'Desserts', productName: 'New York Cheesecake', description: 'Classic creamy cheesecake with graham cracker crust.', price: 280, imageUrl: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '400 kcal' },
-  { id: 19, category: 'Desserts', productName: 'Classic Tiramisu', description: 'Coffee-flavored Italian dessert.', price: 300, imageUrl: 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '420 kcal' },
+  { id: 19, category: 'Desserts',   productName: 'Fudge Brownie',          description: 'Warm, dense brownie with crisp exterior.',            price: 200, imageUrl: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins',  calories: '350 kcal' },
+  { id: 20, category: 'Desserts',   productName: 'NY Cheesecake',          description: 'Creamy cheesecake with graham cracker crust.',        price: 280, imageUrl: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins',  calories: '400 kcal' },
+  { id: 21, category: 'Desserts',   productName: 'Classic Tiramisu',       description: 'Authentic Italian coffee-flavoured layered dessert.',  price: 300, imageUrl: 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins',  calories: '420 kcal' },
 
-  // New Additions
-  { id: 20, category: 'Pasta', productName: 'Truffle Mushroom Pasta', description: 'Creamy pasta with black truffle shavings.', price: 450, imageUrl: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '550 kcal' },
-  { id: 21, category: 'Salads', productName: 'Mediterranean Salad', description: 'Fresh greens, feta, olives, and lemon vinaigrette.', price: 300, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '10 mins', calories: '250 kcal' },
-  { id: 22, category: 'Steaks', productName: 'Ribeye Steak', description: 'Prime cut ribeye with garlic butter.', price: 950, imageUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '25 mins', calories: '850 kcal' },
-  { id: 23, category: 'Appetizers', productName: 'Crispy Calamari', description: 'Lightly fried squid with tartare sauce.', price: 350, imageUrl: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '15 mins', calories: '400 kcal' },
-  { id: 24, category: 'Smoothies', productName: 'Berry Blast', description: 'Mixed wild berries and yogurt blend.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '180 kcal' }
+  // Pasta
+  { id: 22, category: 'Pasta',      productName: 'Truffle Mushroom Pasta', description: 'Creamy pasta with earthy black truffle shavings.',    price: 450, imageUrl: 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '550 kcal' },
+  { id: 23, category: 'Pasta',      productName: 'Arrabbiata',             description: 'Spicy tomato sauce with penne and fresh basil.',      price: 320, imageUrl: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '15 mins', calories: '480 kcal' },
+  { id: 24, category: 'Pasta',      productName: 'Carbonara',              description: 'Classic Roman pasta with egg, pecorino and guanciale.', price: 380, imageUrl: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '18 mins', calories: '620 kcal' },
+
+  // Salads
+  { id: 25, category: 'Salads',     productName: 'Mediterranean Salad',    description: 'Fresh greens, feta, olives and lemon vinaigrette.',   price: 300, imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '10 mins', calories: '250 kcal' },
+  { id: 26, category: 'Salads',     productName: 'Caesar Salad',           description: 'Romaine, parmesan, croutons and house Caesar dressing.', price: 280, imageUrl: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '10 mins', calories: '320 kcal' },
+
+  // Steaks
+  { id: 27, category: 'Steaks',     productName: 'Ribeye Steak',           description: 'Prime-cut ribeye with garlic herb butter.',           price: 950, imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '25 mins', calories: '850 kcal' },
+  { id: 28, category: 'Steaks',     productName: 'Tenderloin Steak',       description: 'Butter-soft tenderloin with peppercorn sauce.',       price: 1100, imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '25 mins', calories: '720 kcal' },
+
+  // Appetizers
+  { id: 29, category: 'Appetizers', productName: 'Crispy Calamari',        description: 'Lightly fried squid rings with tartare sauce.',       price: 350, imageUrl: 'https://images.unsplash.com/photo-1559847844-5315695dadae?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '15 mins', calories: '400 kcal' },
+  { id: 30, category: 'Appetizers', productName: 'Bruschetta',             description: 'Toasted bread with fresh tomato and basil.',          price: 220, imageUrl: 'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '10 mins', calories: '220 kcal' },
+
+  // Smoothies
+  { id: 31, category: 'Smoothies',  productName: 'Berry Blast',            description: 'Mixed wild berries and yogurt blend.',               price: 200, imageUrl: 'https://images.unsplash.com/photo-1553530666-ba11a90a3f88?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins',  calories: '180 kcal' },
+  { id: 32, category: 'Smoothies',  productName: 'Mango Tango',            description: 'Alphonso mango, banana and coconut milk blend.',      price: 220, imageUrl: 'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins',  calories: '210 kcal' },
 ];
 
 const CustomerOrder = () => {
@@ -61,108 +67,343 @@ const CustomerOrder = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [orderSuccessId, setOrderSuccessId] = useState(null);
-  
+  const [heroVisible, setHeroVisible] = useState(true);
   const menuRef = useRef(null);
 
-  const handleBrowseClick = () => {
-    menuRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = subtotal * 1.05;
 
   const addToCart = (product) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
-      if (existing) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
-      }
+      if (existing) return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
       return [...prev, { ...product, quantity: 1 }];
     });
   };
 
   const updateQuantity = (product, delta) => {
-    setCart(prev => prev.map(item => {
-      if (item.id === product.id) {
-        const newQuantity = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    }));
+    setCart(prev => prev.map(item => item.id === product.id
+      ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+      : item));
   };
 
-  const removeItem = (product) => {
-    setCart(prev => prev.filter(item => item.id !== product.id));
-  };
+  const removeItem = (product) => setCart(prev => prev.filter(item => item.id !== product.id));
 
   const handleCheckoutConfirm = (formData) => {
-    console.debug('Processing order checkout:', formData);
-    // Generate random order ID
+    console.debug('Checkout:', formData);
     const newOrderId = 'ORD' + Math.floor(100000 + Math.random() * 900000);
     setIsCheckoutOpen(false);
-    setTimeout(() => {
-      setOrderSuccessId(newOrderId);
-      setCart([]);
-    }, 500);
+    setTimeout(() => { setOrderSuccessId(newOrderId); setCart([]); }, 400);
   };
 
-  const filteredMenu = selectedCategory === 'All' 
-    ? menuData 
+  const filteredMenu = selectedCategory === 'All'
+    ? menuData
     : menuData.filter(item => item.category === selectedCategory);
-
-  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const total = subtotal + (subtotal * 0.05);
 
   return (
     <div className="bg-customer-bg min-h-screen text-customer-text font-sans selection:bg-customer-accent selection:text-customer-bg">
-      <HeroSection onBrowseClick={handleBrowseClick} />
-      
-      <div ref={menuRef} className="w-full max-w-[1600px] mx-auto px-4 lg:px-8 pb-32">
-        <CategoryTabs 
-          selectedCategory={selectedCategory} 
-          onSelectCategory={setSelectedCategory} 
-        />
-        
-        <div className="w-full py-12 flex flex-col items-center justify-center">
-          {(() => {
-            const rows = [];
-            let i = 0;
-            let useFour = true;
-            while (i < filteredMenu.length) {
-              const chunkSize = useFour ? 4 : 3;
-              rows.push(filteredMenu.slice(i, i + chunkSize));
-              i += chunkSize;
-              useFour = !useFour;
-            }
 
-            return rows.map((row, index) => (
-              <div 
-                key={index} 
-                className={`w-full xl:w-max mx-auto grid gap-6 md:gap-10 mb-8 md:mb-12 justify-items-center ${
-                  row.length === 4 ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4' : 
-                  row.length === 3 ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3' : 
-                  row.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'
+      {/* ── Full-Width Navbar ── */}
+      <nav className="w-full sticky top-0 z-50 bg-customer-bg/95 backdrop-blur-xl border-b border-white/10 shadow-[0_2px_24px_rgba(0,0,0,0.5)]">
+        <div className="w-full px-6 lg:px-12 h-[68px] flex items-center justify-between gap-6">
+
+          {/* Brand */}
+          <div className="flex items-center gap-3 shrink-0">
+            <Logo className="w-11 h-11" />
+            <span
+              className="text-[1.35rem] font-bold tracking-wide text-customer-accent"
+              style={{ fontFamily: "'Great Vibes', cursive" }}
+            >GatherPoint</span>
+          </div>
+
+          {/* Right actions */}
+          <div className="flex items-center gap-3 shrink-0 ml-auto">
+            {/* Browse menu shortcut */}
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full border border-customer-accent/50 text-customer-accent text-sm font-semibold hover:bg-customer-accent hover:text-customer-bg transition-all duration-200"
+            >
+              Browse Menu <ChevronDown size={14} />
+            </motion.button>
+
+            {/* Cart */}
+            <motion.button
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.94 }}
+              onClick={() => document.getElementById('cart-trigger-btn')?.click()}
+              className="relative flex items-center gap-2 px-5 py-2.5 rounded-full bg-customer-primary text-customer-text font-bold text-sm hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_18px_rgba(45,106,79,0.35)]"
+            >
+              <ShoppingBag size={16} />
+              <span className="hidden sm:inline">Cart</span>
+              <AnimatePresence>
+                {totalItems > 0 && (
+                  <motion.span
+                    key={totalItems}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-customer-bg"
+                  >
+                    {totalItems}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          </div>
+        </div>
+      </nav>
+
+      {/* ── Hero Banner ── */}
+      <AnimatePresence>
+        {heroVisible && (
+          <motion.section
+            key="hero"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.45 }}
+            className="relative w-full overflow-hidden"
+            style={{ background: 'linear-gradient(135deg,#071B14 0%,#0d2318 40%,#071B14 100%)' }}
+          >
+            {/* Background glow blobs */}
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-customer-primary/10 blur-[120px]" />
+              <div className="absolute -bottom-32 -right-20 w-[400px] h-[400px] rounded-full bg-customer-accent/8 blur-[100px]" />
+            </div>
+
+            <div className="relative max-w-7xl mx-auto px-8 lg:px-16 py-16 lg:py-24 flex flex-col lg:flex-row items-center gap-14">
+
+              {/* ── LEFT copy ── */}
+              <motion.div
+                className="flex-1 text-center lg:text-left z-10"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, ease: 'easeOut' }}
+              >
+                <motion.p
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-customer-accent/80 mb-5 border border-customer-accent/20 rounded-full px-4 py-1.5 bg-customer-accent/5"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-customer-accent animate-pulse" />
+                  Premium Dining Experience
+                </motion.p>
+
+                <motion.h1
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.28, duration: 0.65 }}
+                  className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] mb-6"
+                  style={{ fontFamily: "'Cinzel', serif" }}
+                >
+                  <span className="text-customer-text">Taste the</span>{' '}
+                  <span className="text-customer-accent">Finest</span>
+                  <br />
+                  <span className="text-customer-text">in Every Bite</span>
+                </motion.h1>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.45 }}
+                  className="text-customer-text/60 text-base lg:text-lg max-w-sm mx-auto lg:mx-0 mb-10 leading-relaxed"
+                >
+                  Curated dishes crafted with passion.
+                  Order at your table — skip the wait.
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.58 }}
+                  className="flex flex-wrap gap-4 justify-center lg:justify-start"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                    className="px-8 py-4 bg-customer-accent text-customer-bg font-bold rounded-full text-base shadow-[0_0_24px_rgba(212,163,115,0.35)] hover:shadow-[0_0_40px_rgba(212,163,115,0.55)] transition-shadow"
+                  >
+                    🍽️ Explore Menu
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => setHeroVisible(false)}
+                    className="px-8 py-4 border border-white/20 text-customer-text/70 font-semibold rounded-full text-base hover:border-customer-accent/60 hover:text-customer-accent transition-all duration-300"
+                  >
+                    Quick Order ↓
+                  </motion.button>
+                </motion.div>
+
+                {/* Stats row */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.72 }}
+                  className="mt-10 flex items-center gap-8 justify-center lg:justify-start"
+                >
+                  {[
+                    { label: 'Dishes', value: `${menuData.length}+` },
+                    { label: 'Rating', value: '4.9 ⭐' },
+                    { label: 'Avg wait', value: '8 min' },
+                  ].map(stat => (
+                    <div key={stat.label} className="text-center lg:text-left">
+                      <p className="text-2xl font-bold text-customer-accent">{stat.value}</p>
+                      <p className="text-xs text-customer-text/40 uppercase tracking-widest mt-0.5">{stat.label}</p>
+                    </div>
+                  ))}
+                </motion.div>
+              </motion.div>
+
+              {/* ── RIGHT image ── */}
+              <motion.div
+                className="flex-none flex items-center justify-center relative"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.18, ease: 'easeOut' }}
+              >
+                {/* Container with known size so badges can be absolutely positioned */}
+                <div className="relative w-72 h-72 lg:w-[380px] lg:h-[380px]">
+
+                  {/* Glow ring */}
+                  <div className="absolute inset-0 rounded-full bg-customer-primary/20 blur-2xl scale-110" />
+
+                  {/* Main image */}
+                  <motion.div
+                    animate={{ y: [0, -14, 0] }}
+                    transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+                    className="relative w-full h-full rounded-full border-[3px] border-customer-accent/25 overflow-hidden shadow-[0_0_70px_rgba(45,106,79,0.35)]"
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop"
+                      alt="Featured Dish"
+                      className="w-full h-full object-cover scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-customer-bg/50 via-transparent to-transparent" />
+                  </motion.div>
+
+                  {/* Rating badge — top-right of the image circle */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.7, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ delay: 0.85, type: 'spring', stiffness: 200 }}
+                    className="absolute -top-3 -right-3 lg:top-0 lg:-right-6 bg-customer-bg/80 backdrop-blur-md border border-customer-accent/30 rounded-2xl px-4 py-2.5 shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                  >
+                    <p className="text-[10px] text-customer-text/50 uppercase tracking-wider">Rating</p>
+                    <p className="text-customer-accent font-extrabold text-xl leading-none mt-0.5">4.9 ⭐</p>
+                  </motion.div>
+
+                  {/* Dishes badge — bottom-left of the image circle */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.7, y: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ delay: 1.05, type: 'spring', stiffness: 200 }}
+                    className="absolute -bottom-3 -left-3 lg:bottom-0 lg:-left-6 bg-customer-bg/80 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2.5 shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                  >
+                    <p className="text-[10px] text-customer-text/50 uppercase tracking-wider">Available</p>
+                    <p className="text-white font-extrabold text-xl leading-none mt-0.5">{menuData.length}+ Dishes</p>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
+
+      {/* ── Menu Section ── */}
+      <div ref={menuRef} className="w-full">
+        {/* Sticky category tabs */}
+        <div className="sticky top-[68px] z-40 w-full bg-customer-bg/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+          <div className="w-full px-4 lg:px-10 py-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {[
+              { label: 'All',         icon: '🍴' },
+              { label: 'Coffee',      icon: '☕' },
+              { label: 'Tea',         icon: '🍵' },
+              { label: 'Burgers',     icon: '🍔' },
+              { label: 'Pizza',       icon: '🍕' },
+              { label: 'Desserts',    icon: '🍰' },
+              { label: 'Pasta',       icon: '🍝' },
+              { label: 'Salads',      icon: '🥗' },
+              { label: 'Steaks',      icon: '🥩' },
+              { label: 'Appetizers',  icon: '🥟' },
+              { label: 'Smoothies',   icon: '🥤' },
+            ].map(({ label, icon }) => (
+              <motion.button
+                key={label}
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedCategory(label)}
+                className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                  selectedCategory === label
+                    ? 'bg-customer-accent text-customer-bg shadow-[0_0_14px_rgba(212,163,115,0.45)]'
+                    : 'bg-white/5 text-customer-text/55 border border-white/10 hover:border-customer-accent/40 hover:text-customer-accent hover:bg-customer-accent/5'
                 }`}
               >
-                {row.map(product => (
-                  <div 
-                    key={product.id} 
-                    className="w-full sm:w-[320px] lg:w-[350px]"
-                  >
-                    <ProductCard product={product} onAdd={addToCart} />
-                  </div>
-                ))}
-              </div>
-            ));
-          })()}
+                <span className="text-base leading-none">{icon}</span>
+                {label}
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
+        {/* Section title */}
+        <motion.div
+          key={selectedCategory}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-full px-6 lg:px-12 pt-10 pb-4"
+        >
+          <h2 className="text-2xl font-bold text-customer-text">
+            {selectedCategory === 'All' ? 'All Items' : selectedCategory}
+            <span className="text-customer-text/40 text-base font-normal ml-3">({filteredMenu.length} items)</span>
+          </h2>
+        </motion.div>
+
+        {/* Product Grid */}
+        <div className="w-full px-6 lg:px-12 pb-40">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedCategory}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.35 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              {filteredMenu.map(product => (
+                <ProductCard key={product.id} product={product} onAdd={addToCart} />
+              ))}
+            </motion.div>
+          </AnimatePresence>
+
+          {filteredMenu.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-24 text-customer-text/40"
+            >
+              <span className="text-6xl mb-4">🍽️</span>
+              <p className="text-xl font-semibold">No items in this category</p>
+            </motion.div>
+          )}
         </div>
       </div>
 
-      <FloatingCart 
+      {/* FloatingCart — hidden trigger button for navbar cart button */}
+      <FloatingCart
         cart={cart}
         updateQuantity={updateQuantity}
         removeItem={removeItem}
         onCheckout={() => setIsCheckoutOpen(true)}
       />
 
-      <CheckoutModal 
+      <CheckoutModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         onConfirm={handleCheckoutConfirm}
@@ -170,9 +411,9 @@ const CustomerOrder = () => {
       />
 
       {orderSuccessId && (
-        <OrderSuccess 
-          orderId={orderSuccessId} 
-          onTrackOrder={() => setOrderSuccessId(null)} 
+        <OrderSuccess
+          orderId={orderSuccessId}
+          onTrackOrder={() => setOrderSuccessId(null)}
         />
       )}
     </div>
