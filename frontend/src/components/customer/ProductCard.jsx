@@ -40,28 +40,43 @@ const ProductCard = ({ product, onAdd }) => {
       ref={cardRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col h-full hover:border-customer-accent/50 hover:shadow-[0_0_20px_rgba(212,163,115,0.2)] transition-colors duration-300 group"
+      className="relative rounded-2xl h-64 overflow-hidden group cursor-pointer border border-white/10 hover:border-customer-accent/50 hover:shadow-[0_0_20px_rgba(212,163,115,0.2)] transition-all duration-300"
     >
-      <div className="w-full h-32 rounded-xl bg-customer-primary/10 mb-4 flex items-center justify-center text-5xl overflow-hidden relative">
+      {/* Background Image */}
+      <div className="absolute inset-0 bg-customer-primary/10 flex items-center justify-center text-6xl">
         {product.imageUrl && product.imageUrl.length > 5 && product.imageUrl.startsWith('http') ? (
-          <img src={product.imageUrl} alt={product.productName} className="w-full h-full object-cover" />
+          <img src={product.imageUrl} alt={product.productName} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
         ) : (
-          <span className="drop-shadow-lg">{product.imageUrl || '☕'}</span>
+          <span className="drop-shadow-lg transition-transform duration-700 group-hover:scale-110">{product.imageUrl || '☕'}</span>
         )}
       </div>
-      
-      <div className="flex-grow flex flex-col">
-        <h3 className="text-xl font-bold text-customer-text mb-2 font-sans">{product.productName}</h3>
-        <p className="text-sm text-customer-text/70 mb-4 flex-grow line-clamp-2">{product.description}</p>
+
+      {/* Dark Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />
+
+      {/* Content Container */}
+      <div className="absolute inset-0 flex flex-col justify-end p-5">
+        {/* Title (Always visible) */}
+        <h3 className="text-xl font-bold text-customer-text font-sans transform transition-transform duration-300 group-hover:-translate-y-1">{product.productName}</h3>
         
-        <div className="flex items-center justify-between mt-auto pt-2 border-t border-white/10">
-          <span className="text-2xl font-bold text-customer-accent font-sans">₹{product.price}</span>
-          <button 
-            onClick={() => onAdd(product)}
-            className="w-10 h-10 rounded-full bg-customer-primary flex items-center justify-center text-customer-text hover:bg-customer-accent hover:text-customer-bg transition-colors duration-300 group-hover:scale-110"
-          >
-            <Plus size={20} />
-          </button>
+        {/* Hidden Details that appear on hover */}
+        <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out">
+          <div className="overflow-hidden">
+            <p className="text-sm text-customer-text/80 mb-3 mt-1 line-clamp-2">{product.description}</p>
+            
+            <div className="flex items-center justify-between pt-3 border-t border-white/20">
+              <span className="text-2xl font-bold text-customer-accent font-sans">₹{product.price}</span>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAdd(product);
+                }}
+                className="w-10 h-10 rounded-full bg-customer-primary flex items-center justify-center text-customer-text hover:bg-customer-accent hover:text-customer-bg transition-colors duration-300 hover:scale-110"
+              >
+                <Plus size={20} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
