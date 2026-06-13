@@ -634,9 +634,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .auth-form-side h2 {
   color: #1b2e23;
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  margin-bottom: 8px;
+  font-family: var(--font-calligraphy);
+  font-size: 3.2rem;
+  font-weight: normal;
+  margin-bottom: 4px;
 }
 
 .auth-form-side p {
