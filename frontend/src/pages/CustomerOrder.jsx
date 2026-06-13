@@ -14,10 +14,17 @@ const menuData = [
   { id: 4, category: 'Coffee', productName: 'Iced Caramel Mocha', description: 'Chilled espresso with chocolate, caramel, and milk.', price: 220, imageUrl: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '7 mins', calories: '280 kcal' },
   
   // Tea
-  { id: 5, category: 'Tea', productName: 'Masala Chai', description: 'Traditional Indian spiced tea brewed to perfection.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1576092762791-dd9e2220afa1?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '10 mins', calories: '90 kcal' },
+  { id: 5, category: 'Tea', productName: 'Masala Chai', description: 'Traditional Indian spiced tea brewed to perfection.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '10 mins', calories: '90 kcal' },
   { id: 6, category: 'Tea', productName: 'Matcha Green Tea', description: 'Premium Japanese matcha with steamed almond milk.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '5 mins', calories: '60 kcal' },
   { id: 7, category: 'Tea', productName: 'Peach Iced Tea', description: 'Refreshing iced black tea infused with sweet peach.', price: 140, imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins', calories: '110 kcal' },
   { id: 8, category: 'Tea', productName: 'Earl Grey Hot', description: 'Classic bergamot infused black tea.', price: 130, imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop', rating: '4.4', prepTime: '5 mins', calories: '2 kcal' },
+  { id: 101, category: 'Tea', productName: 'Lemon Ginger Tea', description: 'Soothing blend of lemon and ginger.', price: 130, imageUrl: 'https://images.unsplash.com/photo-1582793988951-9aed550c198d?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '5 mins', calories: '5 kcal' },
+  { id: 102, category: 'Tea', productName: 'Jasmine Green Tea', description: 'Light green tea with floral jasmine notes.', price: 150, imageUrl: 'https://images.unsplash.com/photo-1594631252845-29fc4cc8cbf9?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '2 kcal' },
+  { id: 103, category: 'Tea', productName: 'Peppermint Tea', description: 'Caffeine-free refreshing mint tea.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1543622748-5bc023774844?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '5 mins', calories: '0 kcal' },
+  { id: 104, category: 'Tea', productName: 'Chamomile Relaxer', description: 'Calming chamomile flowers steeped gently.', price: 140, imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '7 mins', calories: '2 kcal' },
+  { id: 105, category: 'Tea', productName: 'Hibiscus Iced Tea', description: 'Tart and vibrant chilled hibiscus.', price: 160, imageUrl: 'https://images.unsplash.com/photo-1499638890251-cefa6a8e8e7c?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '5 mins', calories: '40 kcal' },
+  { id: 106, category: 'Tea', productName: 'Oolong Classic', description: 'Partially oxidized traditional Chinese tea.', price: 180, imageUrl: 'https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '8 mins', calories: '5 kcal' },
+
 
   // Burgers
   { id: 9, category: 'Burgers', productName: 'Classic Veg Burger', description: 'Crispy potato patty with fresh lettuce and mayo.', price: 150, imageUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=600&auto=format&fit=crop', rating: '4.3', prepTime: '10 mins', calories: '350 kcal' },
@@ -30,6 +37,12 @@ const menuData = [
   { id: 14, category: 'Pizza', productName: 'Farmhouse (Veg)', description: 'Loaded with fresh veggies and mozzarella.', price: 420, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '750 kcal' },
   { id: 15, category: 'Pizza', productName: 'Pepperoni (Non-Veg)', description: 'Crispy pepperoni slices on a bed of cheese.', price: 480, imageUrl: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '900 kcal' },
   { id: 16, category: 'Pizza', productName: 'BBQ Chicken (Non-Veg)', description: 'Smoky BBQ chicken, red onions, and cilantro.', price: 460, imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '850 kcal' },
+  { id: 107, category: 'Pizza', productName: 'Four Cheese (Veg)', description: 'Mozzarella, Cheddar, Parmesan, and Gouda.', price: 500, imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '20 mins', calories: '850 kcal' },
+  { id: 108, category: 'Pizza', productName: 'Mushroom Truffle (Veg)', description: 'Earthy mushrooms and truffle oil.', price: 480, imageUrl: 'https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?q=80&w=600&auto=format&fit=crop', rating: '4.8', prepTime: '20 mins', calories: '700 kcal' },
+  { id: 109, category: 'Pizza', productName: 'Hawaiian (Non-Veg)', description: 'Classic ham and pineapple with mozzarella.', price: 450, imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '20 mins', calories: '780 kcal' },
+  { id: 110, category: 'Pizza', productName: 'Meat Lovers (Non-Veg)', description: 'Loaded with pepperoni, sausage, and bacon.', price: 550, imageUrl: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '25 mins', calories: '1100 kcal' },
+  { id: 111, category: 'Pizza', productName: 'Paneer Tikka (Veg)', description: 'Spicy paneer chunks with bell peppers.', price: 430, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop', rating: '4.7', prepTime: '20 mins', calories: '800 kcal' },
+  { id: 112, category: 'Pizza', productName: 'Spicy Chicken Sausage (Non-Veg)', description: 'Sliced chicken sausage with jalapenos.', price: 470, imageUrl: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop', rating: '4.6', prepTime: '20 mins', calories: '820 kcal' },
 
   // Desserts
   { id: 17, category: 'Desserts', productName: 'Fudge Brownie', description: 'Warm fudge brownie with a crisp exterior.', price: 200, imageUrl: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=600&auto=format&fit=crop', rating: '4.9', prepTime: '5 mins', calories: '350 kcal' },
@@ -122,14 +135,16 @@ const CustomerOrder = () => {
             return rows.map((row, index) => (
               <div 
                 key={index} 
-                className="w-full flex flex-wrap justify-center items-start gap-8 mb-8 md:mb-10"
+                className="w-full flex flex-wrap justify-center items-start gap-8 mb-8 md:mb-10 mx-auto"
               >
                 {row.map(product => (
                   <div 
                     key={product.id} 
-                    className={`w-full sm:w-[calc(50%-1rem)] ${row.length === 4 ? 'lg:w-[calc(25%-1.5rem)]' : 'lg:w-[calc(33.333%-1.5rem)]'}`}
+                    className={`w-full sm:w-[calc(50%-1rem)] ${row.length === 4 ? 'lg:w-[calc(25%-1.5rem)]' : 'lg:w-[calc(33.333%-1.5rem)]'} flex justify-center`}
                   >
-                    <ProductCard product={product} onAdd={addToCart} />
+                    <div className="w-full max-w-[380px]">
+                      <ProductCard product={product} onAdd={addToCart} />
+                    </div>
                   </div>
                 ))}
               </div>

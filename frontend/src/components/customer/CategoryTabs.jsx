@@ -17,7 +17,7 @@ const CategoryTabs = ({ selectedCategory, onSelectCategory }) => {
     <div className="sticky top-0 z-40 bg-customer-bg/80 backdrop-blur-lg py-4 w-full z-40">
       <div 
         ref={tabsRef} 
-        className="flex items-center lg:justify-center overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 md:gap-4 pb-2 lg:pb-0 w-full"
+        className="flex items-center md:justify-center overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 md:gap-4 pb-2 lg:pb-0 w-full max-w-fit mx-auto px-4"
       >
         {categories.map(category => (
           <button
