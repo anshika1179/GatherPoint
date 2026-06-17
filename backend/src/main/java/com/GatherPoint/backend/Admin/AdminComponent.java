@@ -34,7 +34,8 @@ public class AdminComponent implements CommandLineRunner {
 
         for (String email : adminEmails) {
             email = email.trim();
-            if (userRepo.findByEmail(email).isEmpty()) {
+            java.util.Optional<User> existing = userRepo.findByEmail(email);
+            if (existing.isEmpty()) {
                 User adminUser = new User();
                 adminUser.setName(email.substring(0, email.indexOf('@')));
                 adminUser.setEmail(email);
@@ -42,6 +43,12 @@ public class AdminComponent implements CommandLineRunner {
                 adminUser.setRole(Role.ADMIN);
                 adminUser.setActive(true);
                 userRepo.save(adminUser);
+            } else {
+                User user = existing.get();
+                if (user.getRole() != Role.ADMIN) {
+                    user.setRole(Role.ADMIN);
+                    userRepo.save(user);
+                }
             }
         }
     }

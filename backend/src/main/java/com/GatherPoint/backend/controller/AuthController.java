@@ -81,18 +81,32 @@ public class AuthController {
     public ResponseEntity<?> clerkLogin(@RequestBody ClerkLoginRequest request) {
         Optional<User> userOpt = userRepo.findByEmail(request.getEmail());
         User user;
+        
+        com.GatherPoint.backend.Constants.Role requestedRole = com.GatherPoint.backend.Constants.Role.EMPLOYEE;
+        if (request.getRole() != null) {
+            try {
+                requestedRole = com.GatherPoint.backend.Constants.Role.valueOf(request.getRole());
+            } catch (IllegalArgumentException e) {
+                // Keep default EMPLOYEE
+            }
+        }
 
         if (userOpt.isEmpty()) {
             user = User.builder()
                     .name(request.getName())
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
-                    .role(com.GatherPoint.backend.Constants.Role.EMPLOYEE)
+                    .role(requestedRole)
                     .active(true)
                     .build();
             user = userRepo.save(user);
         } else {
             user = userOpt.get();
+            // Update role to match requested role for testing/demo purposes
+            if (request.getRole() != null && user.getRole() != requestedRole) {
+                user.setRole(requestedRole);
+                user = userRepo.save(user);
+            }
         }
 
         String token = jwtUtil.generateToken(user.getEmail());

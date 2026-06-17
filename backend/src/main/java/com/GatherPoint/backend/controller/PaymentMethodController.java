@@ -44,4 +44,9 @@ public class PaymentMethodController {
         paymentMethodService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/toggle")
+    public PaymentMethodResponse toggle(@PathVariable Long id) {
+        return paymentMethodService.toggle(id);
+    }
 }

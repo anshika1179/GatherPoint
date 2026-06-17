@@ -54,6 +54,26 @@ public class EmployeeController {
         return ResponseEntity.ok("Password changed successfully!");
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody User employeeDetails) {
+        Optional<User> opt = userRepo.findById(id);
+        if (opt.isEmpty()) return ResponseEntity.notFound().build();
+
+        User user = opt.get();
+        if (!user.getEmail().equalsIgnoreCase(employeeDetails.getEmail())) {
+            if (userRepo.findByEmail(employeeDetails.getEmail()).isPresent()) {
+                return ResponseEntity.badRequest().body("Email already exists!");
+            }
+        }
+
+        user.setName(employeeDetails.getName());
+        user.setEmail(employeeDetails.getEmail());
+        user.setRole(employeeDetails.getRole());
+
+        User saved = userRepo.save(user);
+        return ResponseEntity.ok(saved);
+    }
+
     @PatchMapping("/{id}/archive")
     public ResponseEntity<?> archiveEmployee(@PathVariable Long id) {
         Optional<User> opt = userRepo.findById(id);

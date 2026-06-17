@@ -20,5 +20,6 @@ public class Floor {
     private String name;
 
     @OneToMany(mappedBy = "floor", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("floor")
     private List<RestaurantTable> tables;
 }

@@ -1,20 +1,44 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import Logo from './customer/Logo';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const navigation = [
-    { name: 'POS Terminal', href: '/pos', icon: '🛒' },
-    { name: 'Orders', href: '/orders', icon: '📋' },
-    { name: 'Customers', href: '/customers', icon: '👥' },
-    { name: 'Tables', href: '/tables', icon: '🪑' },
-    { name: 'Kitchen', href: '/kitchen', icon: '🍳' },
-    { name: 'Reports', href: '/reports', icon: '📊' },
-    { name: 'Session', href: '/session', icon: '🔐' },
-    { name: 'Admin', href: '/admin', icon: '⚙️', admin: true },
-  ];
+  const handleLogout = async () => {
+    await logout();
+    navigate('/staff-pos');
+  };
+
+  const getFilteredNavigation = () => {
+    if (user?.role === 'KITCHEN_STAFF') {
+      return [{ name: 'Kitchen Display', href: '/kitchen', icon: '🍳' }];
+    }
+    if (user?.role === 'EMPLOYEE') {
+      return [
+        { name: 'POS Terminal', href: '/pos', icon: '🛒' },
+        { name: 'Orders', href: '/orders', icon: '📋' },
+        { name: 'Customers', href: '/customers', icon: '👥' },
+        { name: 'Tables', href: '/tables', icon: '🪑' },
+        { name: 'Reports', href: '/reports', icon: '📊' },
+        { name: 'Session', href: '/session', icon: '🔐' },
+      ];
+    }
+    // ADMIN has access to all links
+    return [
+      { name: 'POS Terminal', href: '/pos', icon: '🛒' },
+      { name: 'Orders', href: '/orders', icon: '📋' },
+      { name: 'Customers', href: '/customers', icon: '👥' },
+      { name: 'Tables', href: '/tables', icon: '🪑' },
+      { name: 'Kitchen Display', href: '/kitchen', icon: '🍳' },
+      { name: 'Reports', href: '/reports', icon: '📊' },
+      { name: 'Session', href: '/session', icon: '🔐' },
+      { name: 'Admin Panel', href: '/admin', icon: '⚙️' },
+    ];
+  };
+
+  const navigation = getFilteredNavigation();
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex">
@@ -27,16 +51,14 @@ export default function Layout({ children }) {
         
         <nav className="flex-1 p-4 space-y-2">
           {navigation.map((item) => (
-            !item.admin || user?.role === 'ADMIN' ? (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                <span className="text-xl">{item.icon}</span>
-                <span className="font-medium">{item.name}</span>
-              </Link>
-            ) : null
+            <Link
+              key={item.name}
+              to={item.href}
+              className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <span className="text-xl">{item.icon}</span>
+              <span className="font-medium">{item.name}</span>
+            </Link>
           ))}
         </nav>
 
@@ -47,12 +69,12 @@ export default function Layout({ children }) {
             </div>
             <div>
               <p className="font-medium text-sm">{user?.name}</p>
-              <p className="text-xs text-gray-500 capitalize">{user?.role?.toLowerCase()}</p>
+              <p className="text-xs text-gray-500 capitalize">{user?.role?.replace('_', ' ').toLowerCase()}</p>
             </div>
           </div>
           <button
-            onClick={logout}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            onClick={handleLogout}
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors cursor-pointer"
           >
             Logout
           </button>

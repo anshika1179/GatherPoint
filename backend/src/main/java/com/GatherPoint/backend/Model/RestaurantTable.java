@@ -23,5 +23,6 @@ public class RestaurantTable {
     private boolean active;
 
     @ManyToOne
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("tables")
     private Floor floor;
 }

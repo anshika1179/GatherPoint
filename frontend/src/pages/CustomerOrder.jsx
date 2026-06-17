@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/customer/ProductCard';
 import FloatingCart from '../components/customer/FloatingCart';
@@ -6,7 +6,7 @@ import CheckoutModal from '../components/customer/CheckoutModal';
 import ProductDetailModal from '../components/customer/ProductDetailModal';
 import OrderSuccess from '../components/customer/OrderSuccess';
 import Logo from '../components/customer/Logo';
-import { ShoppingBag, ChevronDown, BookOpen, CreditCard, Trash2, Plus, Minus, Smartphone, Banknote, ArrowRight } from 'lucide-react';
+import { ShoppingBag, ChevronDown, BookOpen, CreditCard, Trash2, Plus, Minus, Smartphone, Banknote, ArrowRight, Loader2, ShieldCheck } from 'lucide-react';
 
 // Deduplicated menu — each item has a unique image
 const menuData = [
@@ -110,13 +110,14 @@ const CustomerOrder = () => {
   const removeItem = (product) => setCart(prev => prev.filter(item => item.id !== product.id));
 
   const handleCheckoutConfirm = (formData) => {
-    console.debug('Checkout:', formData);
-    const newOrderId = 'ORD' + Math.floor(100000 + Math.random() * 900000);
+    console.debug('Checkout confirmed:', formData);
+    // Use the Razorpay payment ID (or a fallback) as the order ID shown in success screen
+    const successId = formData.transactionRef || ('ORD' + Math.floor(100000 + Math.random() * 900000));
     setIsCheckoutOpen(false);
     setActiveTab('product');
-    setTimeout(() => { 
-      setOrderSuccessId(newOrderId); 
-      setCart([]); 
+    setTimeout(() => {
+      setOrderSuccessId(successId);
+      setCart([]);
       setCheckoutForm({ name: '', phone: '', instructions: '', payment: 'UPI' });
     }, 400);
   };
@@ -220,51 +221,128 @@ const CustomerOrder = () => {
   };
 
   const renderMobilePayment = () => {
-    const handleSubmit = (e) => {
+    const [mobileLoading, setMobileLoading] = useState(false);
+    const [mobileError, setMobileError]     = useState('');
+
+    const loadRazorpayScript = () => new Promise((resolve) => {
+      if (document.getElementById('razorpay-script')) return resolve(true);
+      const s = document.createElement('script');
+      s.id = 'razorpay-script';
+      s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      s.onload = () => resolve(true);
+      s.onerror = () => resolve(false);
+      document.body.appendChild(s);
+    });
+
+    const handleMobileSubmit = async (e) => {
       e.preventDefault();
-      handleCheckoutConfirm(checkoutForm);
+      setMobileError('');
+
+      if (checkoutForm.payment === 'CASH') {
+        handleCheckoutConfirm({ ...checkoutForm, transactionRef: 'CASH-' + Date.now() });
+        return;
+      }
+
+      setMobileLoading(true);
+      try {
+        const loaded = await loadRazorpayScript();
+        if (!loaded) throw new Error('Failed to load Razorpay SDK.');
+
+        const res = await fetch('/api/public/razorpay/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: total, currency: 'INR', receipt: `receipt_${Date.now()}` }),
+        });
+        if (!res.ok) throw new Error('Could not initiate payment.');
+        const orderData = await res.json();
+
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_We2TfD6XCCwnVb',
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: 'GatherPoint',
+          description: 'Food & Beverage Order',
+          order_id: orderData.id,
+          prefill: { name: checkoutForm.name, contact: checkoutForm.phone },
+          theme: { color: '#c9a96e' },
+          modal: { ondismiss: () => { setMobileLoading(false); setMobileError('Payment cancelled.'); } },
+          handler: async (response) => {
+            try {
+              const vRes = await fetch('/api/public/razorpay/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id:   response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature:  response.razorpay_signature,
+                }),
+              });
+              const vData = await vRes.json();
+              if (vData.verified) {
+                handleCheckoutConfirm({ ...checkoutForm, transactionRef: response.razorpay_payment_id });
+              } else {
+                setMobileError('Payment verification failed. ID: ' + response.razorpay_payment_id);
+              }
+            } catch {
+              setMobileError('Verification error. ID: ' + response.razorpay_payment_id);
+            } finally {
+              setMobileLoading(false);
+            }
+          },
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', (r) => {
+          setMobileLoading(false);
+          setMobileError('Payment failed: ' + (r.error?.description || 'Unknown error'));
+        });
+        rzp.open();
+      } catch (err) {
+        setMobileLoading(false);
+        setMobileError(err.message || 'Something went wrong.');
+      }
     };
 
     return (
       <div className="md:hidden w-full px-6 py-8 pb-32 text-left">
-        <h2 className="text-3xl font-cinzel font-bold text-customer-accent mb-6 flex items-center gap-3">
+        <h2 className="text-3xl font-cinzel font-bold text-customer-accent mb-1 flex items-center gap-3">
           <CreditCard size={28} />
           Payment
         </h2>
+        <p className="text-customer-text/40 text-sm mb-6">Powered by Razorpay · 100% secure</p>
 
         {cart.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-customer-text/50">
             <ShoppingBag size={64} className="mb-4 opacity-20" />
             <p className="text-lg font-sans">Your cart is empty.</p>
-            <button 
-              onClick={() => setActiveTab('product')} 
+            <button
+              onClick={() => setActiveTab('product')}
               className="mt-4 text-customer-accent hover:underline font-bold"
             >
               Start browsing
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white/5 border border-white/10 rounded-3xl p-6">
+          <form onSubmit={handleMobileSubmit} className="space-y-5 bg-white/5 border border-white/10 rounded-3xl p-6">
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-customer-text/80 mb-2">Full Name</label>
-                <input 
+                <input
                   required
-                  type="text" 
+                  type="text"
                   value={checkoutForm.name}
-                  onChange={e => setCheckoutForm({...checkoutForm, name: e.target.value})}
+                  onChange={e => setCheckoutForm({ ...checkoutForm, name: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-customer-text focus:outline-none focus:border-customer-accent transition-colors"
                   placeholder="John Doe"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-customer-text/80 mb-2">Phone Number</label>
-                <input 
+                <input
                   required
-                  type="tel" 
+                  type="tel"
                   value={checkoutForm.phone}
-                  onChange={e => setCheckoutForm({...checkoutForm, phone: e.target.value})}
+                  onChange={e => setCheckoutForm({ ...checkoutForm, phone: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-customer-text focus:outline-none focus:border-customer-accent transition-colors"
                   placeholder="+91 98765 43210"
                 />
@@ -272,10 +350,10 @@ const CustomerOrder = () => {
 
               <div>
                 <label className="block text-sm font-semibold text-customer-text/80 mb-2">Special Instructions</label>
-                <textarea 
+                <textarea
                   value={checkoutForm.instructions}
-                  onChange={e => setCheckoutForm({...checkoutForm, instructions: e.target.value})}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-customer-text focus:outline-none focus:border-customer-accent transition-colors resize-none h-24"
+                  onChange={e => setCheckoutForm({ ...checkoutForm, instructions: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-customer-text focus:outline-none focus:border-customer-accent transition-colors resize-none h-20"
                   placeholder="Any allergies or special requests?"
                 />
               </div>
@@ -285,37 +363,65 @@ const CustomerOrder = () => {
               <label className="block text-sm font-semibold text-customer-text/80 mb-3">Payment Method</label>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { id: 'UPI', icon: Smartphone, label: 'UPI' },
-                  { id: 'CARD', icon: CreditCard, label: 'Card' },
-                  { id: 'CASH', icon: Banknote, label: 'Cash' }
+                  { id: 'UPI',  icon: Smartphone, label: 'UPI',  badge: 'Online' },
+                  { id: 'CARD', icon: CreditCard,  label: 'Card', badge: 'Online' },
+                  { id: 'CASH', icon: Banknote,    label: 'Cash', badge: null },
                 ].map(method => (
                   <button
                     key={method.id}
                     type="button"
-                    onClick={() => setCheckoutForm({...checkoutForm, payment: method.id})}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 ${
-                      checkoutForm.payment === method.id 
-                        ? 'border-customer-accent bg-customer-accent/10 text-customer-accent shadow-[0_0_15px_rgba(212,163,115,0.2)]' 
+                    onClick={() => setCheckoutForm({ ...checkoutForm, payment: method.id })}
+                    className={`relative flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 ${
+                      checkoutForm.payment === method.id
+                        ? 'border-customer-accent bg-customer-accent/10 text-customer-accent shadow-[0_0_15px_rgba(212,163,115,0.2)]'
                         : 'border-white/10 bg-white/5 text-customer-text/70 hover:border-white/30'
                     }`}
                   >
+                    {method.badge && (
+                      <span className="absolute -top-2 -right-2 bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                        {method.badge}
+                      </span>
+                    )}
                     <method.icon size={24} />
                     <span className="text-sm font-semibold">{method.label}</span>
                   </button>
                 ))}
               </div>
+              {checkoutForm.payment !== 'CASH' && (
+                <div className="mt-3 flex items-center gap-2 text-customer-text/40 text-xs">
+                  <ShieldCheck size={13} className="text-green-400" />
+                  <span>Payments processed securely via Razorpay</span>
+                </div>
+              )}
             </div>
-            
-            <div className="pt-6 border-t border-white/10 flex items-center justify-between">
+
+            {mobileError && (
+              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                {mobileError}
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-white/10 flex items-center justify-between">
               <div>
                 <div className="text-sm text-customer-text/70">Total to pay</div>
                 <div className="text-2xl font-bold text-customer-accent font-sans">₹{total.toFixed(2)}</div>
               </div>
-              <button 
+              <button
                 type="submit"
-                className="px-8 py-4 bg-customer-primary text-customer-text font-bold rounded-xl hover:bg-customer-accent hover:text-customer-bg transition-colors shadow-lg shadow-customer-primary/20"
+                disabled={mobileLoading}
+                className={`flex items-center gap-2 px-6 py-4 font-bold rounded-xl transition-colors shadow-lg ${
+                  mobileLoading
+                    ? 'bg-customer-primary/50 text-customer-text/50 cursor-not-allowed'
+                    : 'bg-customer-primary text-customer-text hover:bg-customer-accent hover:text-customer-bg shadow-customer-primary/20'
+                }`}
               >
-                Place Order
+                {mobileLoading ? (
+                  <><Loader2 size={18} className="animate-spin" /> Processing…</>
+                ) : checkoutForm.payment === 'CASH' ? (
+                  'Place Order'
+                ) : (
+                  <><ShieldCheck size={18} /> Pay ₹{total.toFixed(2)}</>
+                )}
               </button>
             </div>
           </form>
@@ -368,7 +474,7 @@ const CustomerOrder = () => {
                   document.getElementById('cart-trigger-btn')?.click();
                 }
               }}
-              className="relative flex items-center justify-center gap-2 px-12 py-3.5 rounded-full bg-customer-primary text-customer-text font-bold text-base hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_18px_rgba(45,106,79,0.35)]"
+              className="relative flex items-center gap-2.5 px-9 py-4 rounded-full bg-customer-primary text-customer-text font-black text-lg hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_22px_rgba(45,106,79,0.4)]"
             >
               <ShoppingBag size={22} />
               <span className="hidden sm:inline">Cart</span>
@@ -540,7 +646,7 @@ const CustomerOrder = () => {
         <div className="sticky top-[80px] z-40 w-full bg-customer-bg/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
           <div className="w-full pl-32 pr-6 lg:pl-56 lg:pr-12 h-[70px] flex items-center justify-between gap-2">
             {[
-              { label: 'All',         icon: '🍽️' },
+              { label: 'All',         icon: '🍴' },
               { label: 'Coffee',      icon: '☕' },
               { label: 'Tea',         icon: '🍵' },
               { label: 'Burgers',     icon: '🍔' },
@@ -549,7 +655,7 @@ const CustomerOrder = () => {
               { label: 'Pasta',       icon: '🍝' },
               { label: 'Salads',      icon: '🥗' },
               { label: 'Steaks',      icon: '🥩' },
-              { label: 'Appetizers',  icon: '🥨' },
+              { label: 'Appetizers',  icon: '🥟' },
               { label: 'Smoothies',   icon: '🥤' },
             ].map(({ label, icon }) => (
               <motion.button

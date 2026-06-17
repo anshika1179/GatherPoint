@@ -51,4 +51,13 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         return paymentMethodRepo.findByEnabledTrue().stream()
                 .map(PaymentMethodMapper::toResponse).collect(Collectors.toList());
     }
+
+    @Override
+    public PaymentMethodResponse toggle(Long id) {
+        PaymentMethod pm = paymentMethodRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment method not found with id: " + id));
+        pm.setEnabled(!pm.isEnabled());
+        pm = paymentMethodRepo.save(pm);
+        return PaymentMethodMapper.toResponse(pm);
+    }
 }
