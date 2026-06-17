@@ -186,4 +186,59 @@ public class OrderController {
                 "ticket", savedTicket
         ));
     }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        Optional<Order> opt = orderRepo.findById(id);
+        if (opt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Order order = opt.get();
+        if (payload.containsKey("status")) {
+            try {
+                OrderStatus newStatus = OrderStatus.valueOf(payload.get("status"));
+                order.setStatus(newStatus);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body("Invalid status");
+            }
+        }
+        Order updated = orderRepo.save(order);
+        return ResponseEntity.ok(updated);
+    }
+
+    @Autowired
+    private jakarta.persistence.EntityManager entityManager;
+
+    @PostMapping("/demo")
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity<?> generateDemoOrders() {
+        try {
+            entityManager.createNativeQuery("ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_status_check").executeUpdate();
+        } catch (Exception e) {
+            // ignore if table doesn't exist or constraint doesn't exist
+        }
+
+        User defaultUser = userRepo.findAll().stream().findFirst().orElse(null);
+        List<Order> demoOrders = new ArrayList<>();
+        
+        for (int i = 1; i <= 10; i++) {
+            Order order = Order.builder()
+                    .orderNumber("DEMO-ORD-" + System.currentTimeMillis() + "-" + i)
+                    .status(i % 3 == 0 ? OrderStatus.COMPLETED : (i % 2 == 0 ? OrderStatus.PAID : OrderStatus.DRAFT))
+                    .subtotal(BigDecimal.valueOf(100.0 * i))
+                    .tax(BigDecimal.valueOf(5.0 * i))
+                    .discount(BigDecimal.ZERO)
+                    .total(BigDecimal.valueOf(105.0 * i))
+                    .employee(defaultUser)
+                    .createdAt(LocalDateTime.now().minusHours(i))
+                    .items(new ArrayList<>())
+                    .build();
+            demoOrders.add(orderRepo.save(order));
+        }
+        
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "10 demo orders created",
+                "count", demoOrders.size()
+        ));
+    }
 }

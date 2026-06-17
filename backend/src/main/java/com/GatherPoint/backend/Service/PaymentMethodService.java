@@ -11,4 +11,5 @@ public interface PaymentMethodService {
     PaymentMethodResponse update(Long id, PaymentMethodRequest request);
     void delete(Long id);
     List<PaymentMethodResponse> getEnabled();
+    PaymentMethodResponse toggle(Long id);
 }

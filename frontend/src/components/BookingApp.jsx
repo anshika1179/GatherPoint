@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API_BASE_URL = 'http://localhost:8080/api/public';
+const API_BASE_URL = '/api/public';
 
 // Read customer from localStorage (set by CustomerLoginApp after login)
 const getStoredCustomer = () => {

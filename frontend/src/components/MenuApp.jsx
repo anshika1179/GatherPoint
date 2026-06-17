@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Logo from './customer/Logo';
 
-const API_BASE_URL = 'http://localhost:8080/api/public';
+const API_BASE_URL = '/api/public';
 
 const mStyles = {
   container: {

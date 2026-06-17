@@ -14,7 +14,9 @@ import {
   PieChart, 
   Settings, 
   LogOut,
-  ChevronLeft
+  ChevronLeft,
+  CreditCard,
+  Sparkles
 } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 
@@ -57,7 +59,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       items: [
         { name: 'Orders',    icon: Receipt,   path: '/admin/orders' },
         { name: 'Customers', icon: UserCircle, path: '/admin/customers' },
-        { name: 'Coupons',   icon: Ticket,    path: '/admin/coupons' }
+        { name: 'Coupons',   icon: Ticket,    path: '/admin/coupons' },
+        { name: 'Promotions', icon: Sparkles,   path: '/admin/promotions' },
+        { name: 'Payment Methods', icon: CreditCard, path: '/admin/payment-methods' }
       ]
     },
     {

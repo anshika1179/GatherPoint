@@ -27,6 +27,11 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminProducts from './pages/admin/Products';
 import AdminCategories from './pages/admin/Categories';
 import AdminEmployees from './pages/admin/Employees';
+import AdminReports from './pages/admin/Reports';
+import AdminRevenue from './pages/admin/Revenue';
+import AdminCoupons from './pages/admin/Coupons';
+import AdminPaymentMethods from './pages/admin/PaymentMethods';
+import AdminPromotions from './pages/admin/Promotions';
 
 // ── Hooks / Utils ──────────────────────────────────────────────────────────────
 import useAuth from './hooks/useAuth';
@@ -64,9 +69,8 @@ const LoadingSpinner = () => (
 // /staff-pos  — show login OR redirect to role dashboard
 // ─────────────────────────────────────────────────────────────────────────────
 const StaffPosGate = () => {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   if (loading) return <LoadingSpinner />;
-  if (user)    return <Navigate to={roleHome(user.role)} replace />;
   return <StaffPosLogin />;
 };
 
@@ -182,14 +186,16 @@ export default function App() {
           <Route path="tables"     element={<Tables />} />
           <Route path="employees"  element={<AdminEmployees />} />
 
+          {/* Analytics */}
+          <Route path="reports"    element={<AdminReports />} />
+          <Route path="revenue"    element={<AdminRevenue />} />
+
           {/* Operations */}
           <Route path="orders"     element={<Orders />} />
           <Route path="customers"  element={<Customers />} />
-          <Route path="coupons"    element={<Reports />} />   {/* placeholder until CouponsPage built */}
-
-          {/* Analytics */}
-          <Route path="reports"    element={<Reports />} />
-          <Route path="revenue"    element={<Reports />} />   {/* placeholder until RevenuePage built */}
+          <Route path="coupons"    element={<AdminCoupons />} />
+          <Route path="payment-methods" element={<AdminPaymentMethods />} />
+          <Route path="promotions"      element={<AdminPromotions />} />
 
           {/* Settings / fallback */}
           <Route path="settings"   element={<div className="p-8 text-white text-xl">Settings — coming soon</div>} />

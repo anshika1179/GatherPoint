@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSignIn, useAuth, useUser } from '@clerk/clerk-react';
 
-const API_BASE_URL = 'http://localhost:8080/api/public';
+const API_BASE_URL = '/api/public';
 
 const styles = {
   container: {

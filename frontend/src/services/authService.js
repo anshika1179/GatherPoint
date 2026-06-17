@@ -1,5 +1,5 @@
 // Auth Service - Authentication related services
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '/api';
 
 class AuthService {
   static async login(email, password, role) {
@@ -15,11 +15,11 @@ class AuthService {
     return response.json();
   }
 
-  static async clerkLogin(email, name) {
+  static async clerkLogin(email, name, role) {
     const response = await fetch(`${API_BASE_URL}/auth/clerk-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name }),
+      body: JSON.stringify({ email, name, role }),
     });
     if (!response.ok) {
       const error = await response.text();
@@ -41,7 +41,7 @@ class AuthService {
     return response.json();
   }
 
-  static async getCurrentUser() {
+  static async getCurrentUser(isRetry = false) {
     const token = localStorage.getItem('token');
     if (!token) {
       return null;
@@ -51,11 +51,17 @@ class AuthService {
       headers: { 'Authorization': `Bearer ${token}` },
     });
     if (!response.ok) {
-      // Token might be expired, try to refresh
-      try {
-        await this.refreshToken();
-        return this.getCurrentUser();
-      } catch {
+      if (!isRetry) {
+        // Token might be expired, try to refresh
+        try {
+          await this.refreshToken();
+          return this.getCurrentUser(true);
+        } catch {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          return null;
+        }
+      } else {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         return null;

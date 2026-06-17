@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, Search, Moon, Sun, User } from 'lucide-react';
+import { Bell, Search, Moon, User } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 
 const Topbar = () => {

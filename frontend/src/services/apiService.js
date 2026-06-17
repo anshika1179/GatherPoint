@@ -1,5 +1,5 @@
 // API Service - Centralized API calls
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '/api';
 
 // Global fetch interceptor to append JWT token automatically
 const originalFetch = window.fetch;
@@ -175,6 +175,18 @@ class ApiService {
     return response.json();
   }
 
+  static async updateOrderStatus(orderId, status) {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
+    });
+    if (!response.ok) throw new Error('Failed to update order status');
+    return response.json();
+  }
+
   static async getKitchenTickets() {
     const response = await fetch(`${API_BASE_URL}/kitchen/orders`);
     if (!response.ok) {
@@ -231,6 +243,14 @@ class ApiService {
     return response.json();
   }
 
+  static async getEnabledPaymentMethods() {
+    const response = await fetch(`${API_BASE_URL}/payment-methods/enabled`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch enabled payment methods');
+    }
+    return response.json();
+  }
+
   static async getBookings() {
     const response = await fetch(`${API_BASE_URL}/bookings`);
     if (!response.ok) {
@@ -254,7 +274,23 @@ class ApiService {
   }
 
   static async exportReports(type) {
-    window.open(`${API_BASE_URL}/reports/export/${type}`, '_blank');
+    const response = await fetch(`${API_BASE_URL}/reports/export/${type}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Failed to export report');
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sales_report.${type === 'pdf' ? 'pdf' : 'csv'}`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   }
 
   // Admin endpoints
@@ -525,6 +561,14 @@ class ApiService {
     return response.json();
   }
 
+  static async getSessionHistory() {
+    const response = await fetch(`${API_BASE_URL}/session/history`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch session history');
+    }
+    return response.json();
+  }
+
   static async sendReceipt(orderId, email) {
     const response = await fetch(`${API_BASE_URL}/payments/${orderId}/email`, {
       method: 'POST',
@@ -615,6 +659,181 @@ class ApiService {
     if (!response.ok) {
       const error = await response.text();
       throw new Error(error || 'Failed to create booking from order');
+    }
+    return response.json();
+  }
+
+  // ── Floor CRUD ───────────────────────────────────────────────────────────────
+  static async createFloor(floorData) {
+    const response = await fetch(`${API_BASE_URL}/floors`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(floorData),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to create floor');
+    }
+    return response.json();
+  }
+
+  static async updateFloor(id, floorData) {
+    const response = await fetch(`${API_BASE_URL}/floors/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(floorData),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to update floor');
+    }
+    return response.json();
+  }
+
+  static async deleteFloor(id) {
+    const response = await fetch(`${API_BASE_URL}/floors/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to delete floor');
+    }
+    return response.json();
+  }
+
+  // ── Table CRUD ────────────────────────────────────────────────────────────────
+  static async createTable(tableData) {
+    const response = await fetch(`${API_BASE_URL}/tables`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(tableData),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to create table');
+    }
+    return response.json();
+  }
+
+  static async updateTable(id, tableData) {
+    const response = await fetch(`${API_BASE_URL}/tables/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(tableData),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to update table');
+    }
+    return response.json();
+  }
+
+  static async deleteTable(id) {
+    const response = await fetch(`${API_BASE_URL}/tables/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to delete table');
+    }
+    return response.json();
+  }
+
+  // ── Payment Processing ────────────────────────────────────────────────────────
+  static async processPayment(paymentData) {
+    const response = await fetch(`${API_BASE_URL}/payments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(paymentData),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to process payment');
+    }
+    return response.json();
+  }
+
+  static async processPaymentCash(orderId, amount, amountPaid, change) {
+    const response = await fetch(`${API_BASE_URL}/payments/cash`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, amount, amountPaid, change }),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to process cash payment');
+    }
+    return response.json();
+  }
+
+  static async processPaymentCard(orderId, amount, transactionReference) {
+    const response = await fetch(`${API_BASE_URL}/payments/card`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, amount, transactionReference }),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to process card payment');
+    }
+    return response.json();
+  }
+
+  static async processPaymentUpi(orderId, amount, transactionReference) {
+    const response = await fetch(`${API_BASE_URL}/payments/upi`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, amount, transactionReference }),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to process UPI payment');
+    }
+    return response.json();
+  }
+
+  // ── Coupon Validation ─────────────────────────────────────────────────────────
+  static async validateCoupon(code, orderTotal) {
+    const response = await fetch(`${API_BASE_URL}/coupons/validate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, orderTotal }),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Invalid coupon code');
+    }
+    return response.json();
+  }
+
+  // ── Order by ID ────────────────────────────────────────────────────────────────
+  static async getOrderById(orderId) {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch order');
+    }
+    return response.json();
+  }
+
+  static async updateOrderStatus(orderId, status) {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to update order status');
+    }
+    return response.json();
+  }
+
+  static async seedDemoData() {
+    const response = await fetch(`${API_BASE_URL}/public/reports/seed`, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      throw new Error('Failed to seed demo data');
     }
     return response.json();
   }

@@ -264,9 +264,15 @@ public class ReportController {
                             && o.getCreatedAt().isBefore(dayEnd))
                     .map(Order::getTotal)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
+            long dayOrderCount = paidOrders.stream()
+                    .filter(o -> o.getCreatedAt() != null
+                            && o.getCreatedAt().isAfter(dayStart)
+                            && o.getCreatedAt().isBefore(dayEnd))
+                    .count();
             Map<String, Object> day = new HashMap<>();
             day.put("date", dayStart.toLocalDate().toString());
             day.put("revenue", dayRevenue);
+            day.put("orderCount", dayOrderCount);
             salesTrend.add(day);
         }
 

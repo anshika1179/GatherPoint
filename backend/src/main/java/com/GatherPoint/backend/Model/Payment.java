@@ -27,5 +27,6 @@ public class Payment {
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Order order;
 }

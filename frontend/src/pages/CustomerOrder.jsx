@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/customer/ProductCard';
 import FloatingCart from '../components/customer/FloatingCart';
@@ -6,9 +6,9 @@ import CheckoutModal from '../components/customer/CheckoutModal';
 import ProductDetailModal from '../components/customer/ProductDetailModal';
 import OrderSuccess from '../components/customer/OrderSuccess';
 import Logo from '../components/customer/Logo';
-import { ShoppingBag, ChevronDown, BookOpen, CreditCard, Trash2, Plus, Minus, Smartphone, Banknote, ArrowRight } from 'lucide-react';
+import { ShoppingBag, ChevronDown, BookOpen, CreditCard, Trash2, Plus, Minus, Smartphone, Banknote, ArrowRight, Loader2, ShieldCheck } from 'lucide-react';
 
-// Deduplicated menu ΓÇö each item has a unique image
+// Deduplicated menu — each item has a unique image
 const menuData = [
   // Coffee
   { id: 1,  category: 'Coffee',     productName: 'Espresso Shot',         description: 'Pure, intense espresso with rich crema.',             price: 100, imageUrl: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=600&auto=format&fit=crop', rating: '4.5', prepTime: '3 mins',  calories: '5 kcal'   },
@@ -110,13 +110,14 @@ const CustomerOrder = () => {
   const removeItem = (product) => setCart(prev => prev.filter(item => item.id !== product.id));
 
   const handleCheckoutConfirm = (formData) => {
-    console.debug('Checkout:', formData);
-    const newOrderId = 'ORD' + Math.floor(100000 + Math.random() * 900000);
+    console.debug('Checkout confirmed:', formData);
+    // Use the Razorpay payment ID (or a fallback) as the order ID shown in success screen
+    const successId = formData.transactionRef || ('ORD' + Math.floor(100000 + Math.random() * 900000));
     setIsCheckoutOpen(false);
     setActiveTab('product');
-    setTimeout(() => { 
-      setOrderSuccessId(newOrderId); 
-      setCart([]); 
+    setTimeout(() => {
+      setOrderSuccessId(successId);
+      setCart([]);
       setCheckoutForm({ name: '', phone: '', instructions: '', payment: 'UPI' });
     }, 400);
   };
@@ -156,13 +157,13 @@ const CustomerOrder = () => {
                     {item.imageUrl && item.imageUrl.length > 5 && item.imageUrl.startsWith('http') ? (
                       <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-3xl">Γÿò</div>
+                      <div className="w-full h-full flex items-center justify-center text-3xl">☕</div>
                     )}
                   </div>
                   <div className="flex-grow flex flex-col justify-between">
                     <div>
                       <h4 className="font-bold text-customer-text font-sans text-left">{item.productName}</h4>
-                      <p className="text-sm text-customer-text/60 text-left">Γé╣{item.price}</p>
+                      <p className="text-sm text-customer-text/60 text-left">₹{item.price}</p>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 bg-black/40 rounded-full px-2.5 py-1">
@@ -180,7 +181,7 @@ const CustomerOrder = () => {
                           <Plus size={14} />
                         </button>
                       </div>
-                      <p className="font-bold text-customer-accent font-sans">Γé╣{item.price * item.quantity}</p>
+                      <p className="font-bold text-customer-accent font-sans">₹{item.price * item.quantity}</p>
                     </div>
                   </div>
                   <button 
@@ -196,15 +197,15 @@ const CustomerOrder = () => {
             <div className="p-6 bg-white/5 border border-white/10 rounded-2xl space-y-4">
               <div className="flex justify-between text-customer-text/70">
                 <span>Subtotal</span>
-                <span className="font-sans">Γé╣{subtotal.toFixed(2)}</span>
+                <span className="font-sans">₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-customer-text/70">
                 <span>Taxes (5%)</span>
-                <span className="font-sans">Γé╣{(subtotal * 0.05).toFixed(2)}</span>
+                <span className="font-sans">₹{(subtotal * 0.05).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-xl font-bold border-t border-white/10 pt-4 text-customer-text">
                 <span>Total</span>
-                <span className="text-customer-accent font-sans">Γé╣{total.toFixed(2)}</span>
+                <span className="text-customer-accent font-sans">₹{total.toFixed(2)}</span>
               </div>
               <button 
                 onClick={() => setActiveTab('payment')}
@@ -220,51 +221,128 @@ const CustomerOrder = () => {
   };
 
   const renderMobilePayment = () => {
-    const handleSubmit = (e) => {
+    const [mobileLoading, setMobileLoading] = useState(false);
+    const [mobileError, setMobileError]     = useState('');
+
+    const loadRazorpayScript = () => new Promise((resolve) => {
+      if (document.getElementById('razorpay-script')) return resolve(true);
+      const s = document.createElement('script');
+      s.id = 'razorpay-script';
+      s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      s.onload = () => resolve(true);
+      s.onerror = () => resolve(false);
+      document.body.appendChild(s);
+    });
+
+    const handleMobileSubmit = async (e) => {
       e.preventDefault();
-      handleCheckoutConfirm(checkoutForm);
+      setMobileError('');
+
+      if (checkoutForm.payment === 'CASH') {
+        handleCheckoutConfirm({ ...checkoutForm, transactionRef: 'CASH-' + Date.now() });
+        return;
+      }
+
+      setMobileLoading(true);
+      try {
+        const loaded = await loadRazorpayScript();
+        if (!loaded) throw new Error('Failed to load Razorpay SDK.');
+
+        const res = await fetch('/api/public/razorpay/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: total, currency: 'INR', receipt: `receipt_${Date.now()}` }),
+        });
+        if (!res.ok) throw new Error('Could not initiate payment.');
+        const orderData = await res.json();
+
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_We2TfD6XCCwnVb',
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: 'GatherPoint',
+          description: 'Food & Beverage Order',
+          order_id: orderData.id,
+          prefill: { name: checkoutForm.name, contact: checkoutForm.phone },
+          theme: { color: '#c9a96e' },
+          modal: { ondismiss: () => { setMobileLoading(false); setMobileError('Payment cancelled.'); } },
+          handler: async (response) => {
+            try {
+              const vRes = await fetch('/api/public/razorpay/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id:   response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature:  response.razorpay_signature,
+                }),
+              });
+              const vData = await vRes.json();
+              if (vData.verified) {
+                handleCheckoutConfirm({ ...checkoutForm, transactionRef: response.razorpay_payment_id });
+              } else {
+                setMobileError('Payment verification failed. ID: ' + response.razorpay_payment_id);
+              }
+            } catch {
+              setMobileError('Verification error. ID: ' + response.razorpay_payment_id);
+            } finally {
+              setMobileLoading(false);
+            }
+          },
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', (r) => {
+          setMobileLoading(false);
+          setMobileError('Payment failed: ' + (r.error?.description || 'Unknown error'));
+        });
+        rzp.open();
+      } catch (err) {
+        setMobileLoading(false);
+        setMobileError(err.message || 'Something went wrong.');
+      }
     };
 
     return (
       <div className="md:hidden w-full px-6 py-8 pb-32 text-left">
-        <h2 className="text-3xl font-cinzel font-bold text-customer-accent mb-6 flex items-center gap-3">
+        <h2 className="text-3xl font-cinzel font-bold text-customer-accent mb-1 flex items-center gap-3">
           <CreditCard size={28} />
           Payment
         </h2>
+        <p className="text-customer-text/40 text-sm mb-6">Powered by Razorpay · 100% secure</p>
 
         {cart.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-customer-text/50">
             <ShoppingBag size={64} className="mb-4 opacity-20" />
             <p className="text-lg font-sans">Your cart is empty.</p>
-            <button 
-              onClick={() => setActiveTab('product')} 
+            <button
+              onClick={() => setActiveTab('product')}
               className="mt-4 text-customer-accent hover:underline font-bold"
             >
               Start browsing
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white/5 border border-white/10 rounded-3xl p-6">
+          <form onSubmit={handleMobileSubmit} className="space-y-5 bg-white/5 border border-white/10 rounded-3xl p-6">
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-customer-text/80 mb-2">Full Name</label>
-                <input 
+                <input
                   required
-                  type="text" 
+                  type="text"
                   value={checkoutForm.name}
-                  onChange={e => setCheckoutForm({...checkoutForm, name: e.target.value})}
+                  onChange={e => setCheckoutForm({ ...checkoutForm, name: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-customer-text focus:outline-none focus:border-customer-accent transition-colors"
                   placeholder="John Doe"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-customer-text/80 mb-2">Phone Number</label>
-                <input 
+                <input
                   required
-                  type="tel" 
+                  type="tel"
                   value={checkoutForm.phone}
-                  onChange={e => setCheckoutForm({...checkoutForm, phone: e.target.value})}
+                  onChange={e => setCheckoutForm({ ...checkoutForm, phone: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-customer-text focus:outline-none focus:border-customer-accent transition-colors"
                   placeholder="+91 98765 43210"
                 />
@@ -272,10 +350,10 @@ const CustomerOrder = () => {
 
               <div>
                 <label className="block text-sm font-semibold text-customer-text/80 mb-2">Special Instructions</label>
-                <textarea 
+                <textarea
                   value={checkoutForm.instructions}
-                  onChange={e => setCheckoutForm({...checkoutForm, instructions: e.target.value})}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-customer-text focus:outline-none focus:border-customer-accent transition-colors resize-none h-24"
+                  onChange={e => setCheckoutForm({ ...checkoutForm, instructions: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-customer-text focus:outline-none focus:border-customer-accent transition-colors resize-none h-20"
                   placeholder="Any allergies or special requests?"
                 />
               </div>
@@ -285,37 +363,65 @@ const CustomerOrder = () => {
               <label className="block text-sm font-semibold text-customer-text/80 mb-3">Payment Method</label>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { id: 'UPI', icon: Smartphone, label: 'UPI' },
-                  { id: 'CARD', icon: CreditCard, label: 'Card' },
-                  { id: 'CASH', icon: Banknote, label: 'Cash' }
+                  { id: 'UPI',  icon: Smartphone, label: 'UPI',  badge: 'Online' },
+                  { id: 'CARD', icon: CreditCard,  label: 'Card', badge: 'Online' },
+                  { id: 'CASH', icon: Banknote,    label: 'Cash', badge: null },
                 ].map(method => (
                   <button
                     key={method.id}
                     type="button"
-                    onClick={() => setCheckoutForm({...checkoutForm, payment: method.id})}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 ${
-                      checkoutForm.payment === method.id 
-                        ? 'border-customer-accent bg-customer-accent/10 text-customer-accent shadow-[0_0_15px_rgba(212,163,115,0.2)]' 
+                    onClick={() => setCheckoutForm({ ...checkoutForm, payment: method.id })}
+                    className={`relative flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 ${
+                      checkoutForm.payment === method.id
+                        ? 'border-customer-accent bg-customer-accent/10 text-customer-accent shadow-[0_0_15px_rgba(212,163,115,0.2)]'
                         : 'border-white/10 bg-white/5 text-customer-text/70 hover:border-white/30'
                     }`}
                   >
+                    {method.badge && (
+                      <span className="absolute -top-2 -right-2 bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                        {method.badge}
+                      </span>
+                    )}
                     <method.icon size={24} />
                     <span className="text-sm font-semibold">{method.label}</span>
                   </button>
                 ))}
               </div>
+              {checkoutForm.payment !== 'CASH' && (
+                <div className="mt-3 flex items-center gap-2 text-customer-text/40 text-xs">
+                  <ShieldCheck size={13} className="text-green-400" />
+                  <span>Payments processed securely via Razorpay</span>
+                </div>
+              )}
             </div>
-            
-            <div className="pt-6 border-t border-white/10 flex items-center justify-between">
+
+            {mobileError && (
+              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                {mobileError}
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-white/10 flex items-center justify-between">
               <div>
                 <div className="text-sm text-customer-text/70">Total to pay</div>
-                <div className="text-2xl font-bold text-customer-accent font-sans">Γé╣{total.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-customer-accent font-sans">₹{total.toFixed(2)}</div>
               </div>
-              <button 
+              <button
                 type="submit"
-                className="px-8 py-4 bg-customer-primary text-customer-text font-bold rounded-xl hover:bg-customer-accent hover:text-customer-bg transition-colors shadow-lg shadow-customer-primary/20"
+                disabled={mobileLoading}
+                className={`flex items-center gap-2 px-6 py-4 font-bold rounded-xl transition-colors shadow-lg ${
+                  mobileLoading
+                    ? 'bg-customer-primary/50 text-customer-text/50 cursor-not-allowed'
+                    : 'bg-customer-primary text-customer-text hover:bg-customer-accent hover:text-customer-bg shadow-customer-primary/20'
+                }`}
               >
-                Place Order
+                {mobileLoading ? (
+                  <><Loader2 size={18} className="animate-spin" /> Processing…</>
+                ) : checkoutForm.payment === 'CASH' ? (
+                  'Place Order'
+                ) : (
+                  <><ShieldCheck size={18} /> Pay ₹{total.toFixed(2)}</>
+                )}
               </button>
             </div>
           </form>
@@ -327,7 +433,7 @@ const CustomerOrder = () => {
   return (
     <div className="bg-customer-bg min-h-screen text-customer-text font-sans selection:bg-customer-accent selection:text-customer-bg">
 
-      {/* ΓöÇΓöÇ Full-Width Navbar ΓöÇΓöÇ */}
+      {/* ── Full-Width Navbar ── */}
       <nav className="relative w-full sticky top-0 z-50 bg-customer-bg/95 backdrop-blur-xl border-b border-white/10 shadow-[0_2px_24px_rgba(0,0,0,0.5)]">
         <div className="w-full px-6 lg:px-12 h-[80px] flex items-center justify-between gap-6">
 
@@ -368,7 +474,7 @@ const CustomerOrder = () => {
                   document.getElementById('cart-trigger-btn')?.click();
                 }
               }}
-              className="relative flex items-center justify-center gap-2 px-12 py-3.5 rounded-full bg-customer-primary text-customer-text font-bold text-base hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_18px_rgba(45,106,79,0.35)]"
+              className="relative flex items-center gap-2.5 px-9 py-4 rounded-full bg-customer-primary text-customer-text font-black text-lg hover:bg-customer-accent hover:text-customer-bg transition-colors duration-200 shadow-[0_0_22px_rgba(45,106,79,0.4)]"
             >
               <ShoppingBag size={22} />
               <span className="hidden sm:inline">Cart</span>
@@ -390,7 +496,7 @@ const CustomerOrder = () => {
         </div>
       </nav>
 
-      {/* ΓöÇΓöÇ Hero Banner ΓöÇΓöÇ */}
+      {/* ── Hero Banner ── */}
       <AnimatePresence>
         {heroVisible && activeTab === 'product' && (
           <motion.section
@@ -410,7 +516,7 @@ const CustomerOrder = () => {
 
             <div className="relative flex-1 w-full max-w-7xl mx-auto pl-32 pr-10 lg:pl-56 lg:pr-16 flex flex-col lg:flex-row items-center justify-center gap-16">
 
-              {/* ΓöÇΓöÇ LEFT: Text ΓöÇΓöÇ */}
+              {/* ── LEFT: Text ── */}
               <motion.div
                 className="flex-1 text-left z-10"
                 initial={{ opacity: 0, x: -40 }}
@@ -446,7 +552,7 @@ const CustomerOrder = () => {
                 </motion.p>
               </motion.div>
 
-              {/* ΓöÇΓöÇ RIGHT: Circular image + floating icon badges ΓöÇΓöÇ */}
+              {/* ── RIGHT: Circular image + floating icon badges ── */}
               <motion.div
                 className="flex-none flex items-center justify-center relative"
                 initial={{ opacity: 0, x: 50 }}
@@ -473,7 +579,7 @@ const CustomerOrder = () => {
                     <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(7,27,20,0.35), transparent)' }} />
                   </motion.div>
 
-                  {/* Floating badge ΓÇö leaf / bottom-left */}
+                  {/* Floating badge — leaf / bottom-left */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -488,10 +594,10 @@ const CustomerOrder = () => {
                       fontSize: 20,
                     }}
                   >
-                    ≡ƒî┐
+                    🌿
                   </motion.div>
 
-                  {/* Floating badge ΓÇö coffee cup / top-right */}
+                  {/* Floating badge — coffee cup / top-right */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -506,10 +612,10 @@ const CustomerOrder = () => {
                       fontSize: 20,
                     }}
                   >
-                    Γÿò
+                    ☕
                   </motion.div>
 
-                  {/* Floating badge ΓÇö star / mid-right */}
+                  {/* Floating badge — star / mid-right */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -524,7 +630,7 @@ const CustomerOrder = () => {
                       fontSize: 18,
                     }}
                   >
-                    Γ£¿
+                    ✨
                   </motion.div>
                 </div>
               </motion.div>
@@ -533,24 +639,24 @@ const CustomerOrder = () => {
         )}
       </AnimatePresence>
 
-      {/* ΓöÇΓöÇ Menu Section ΓöÇΓöÇ */}
+      {/* ── Menu Section ── */}
       {activeTab === 'product' && (
         <div ref={menuRef} className="w-full">
         {/* Sticky category tabs */}
         <div className="sticky top-[80px] z-40 w-full bg-customer-bg/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
           <div className="w-full pl-32 pr-6 lg:pl-56 lg:pr-12 h-[70px] flex items-center justify-between gap-2">
             {[
-              { label: 'All',         icon: '≡ƒì┤' },
-              { label: 'Coffee',      icon: 'Γÿò' },
-              { label: 'Tea',         icon: '≡ƒì╡' },
-              { label: 'Burgers',     icon: '≡ƒìö' },
-              { label: 'Pizza',       icon: '≡ƒìò' },
-              { label: 'Desserts',    icon: '≡ƒì░' },
-              { label: 'Pasta',       icon: '≡ƒì¥' },
-              { label: 'Salads',      icon: '≡ƒÑù' },
-              { label: 'Steaks',      icon: '≡ƒÑ⌐' },
-              { label: 'Appetizers',  icon: '≡ƒÑƒ' },
-              { label: 'Smoothies',   icon: '≡ƒÑñ' },
+              { label: 'All',         icon: '🍴' },
+              { label: 'Coffee',      icon: '☕' },
+              { label: 'Tea',         icon: '🍵' },
+              { label: 'Burgers',     icon: '🍔' },
+              { label: 'Pizza',       icon: '🍕' },
+              { label: 'Desserts',    icon: '🍰' },
+              { label: 'Pasta',       icon: '🍝' },
+              { label: 'Salads',      icon: '🥗' },
+              { label: 'Steaks',      icon: '🥩' },
+              { label: 'Appetizers',  icon: '🥟' },
+              { label: 'Smoothies',   icon: '🥤' },
             ].map(({ label, icon }) => (
               <motion.button
                 key={label}
@@ -612,7 +718,7 @@ const CustomerOrder = () => {
               animate={{ opacity: 1 }}
               className="flex flex-col items-center justify-center py-24 text-customer-text/40"
             >
-              <span className="text-6xl mb-4">≡ƒì╜∩╕Å</span>
+              <span className="text-6xl mb-4">🍽️</span>
               <p className="text-xl font-semibold">No items in this category</p>
             </motion.div>
           )}
@@ -626,7 +732,7 @@ const CustomerOrder = () => {
       {/* Mobile Payment View */}
       {activeTab === 'payment' && renderMobilePayment()}
 
-      {/* FloatingCart ΓÇö hidden trigger button for navbar cart button */}
+      {/* FloatingCart — hidden trigger button for navbar cart button */}
       <FloatingCart
         cart={cart}
         updateQuantity={updateQuantity}
@@ -655,7 +761,7 @@ const CustomerOrder = () => {
         />
       )}
 
-      {/* ΓöÇΓöÇ Bottom Navigation Tab Bar (Mobile Only) ΓöÇΓöÇ */}
+      {/* ── Bottom Navigation Tab Bar (Mobile Only) ── */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-customer-bg/95 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-around h-[70px] max-w-md mx-auto">
           {/* Product Tab */}
