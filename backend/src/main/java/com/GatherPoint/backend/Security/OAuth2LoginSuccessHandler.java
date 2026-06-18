@@ -5,6 +5,7 @@ import com.GatherPoint.backend.Repo.UserRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -22,6 +23,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final UserRepo userRepo;
     private final JwtUtil jwtUtil;
 
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
@@ -30,13 +34,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String name = token.getPrincipal().getAttribute("name");
 
         if (email == null) {
-            response.sendRedirect("http://localhost:5173/oauth2/redirect?error=no_email");
+            response.sendRedirect(frontendUrl + "/oauth2/redirect?error=no_email");
             return;
         }
 
         Optional<User> userOpt = userRepo.findByEmail(email);
         if (userOpt.isEmpty()) {
-            response.sendRedirect("http://localhost:5173/oauth2/redirect?error=customer");
+            response.sendRedirect(frontendUrl + "/oauth2/redirect?error=customer");
             return;
         }
 
@@ -45,7 +49,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         user = userRepo.save(user);
 
         String jwt = jwtUtil.generateToken(user.getEmail());
-        String redirectUrl = String.format("http://localhost:5173/oauth2/redirect?token=%s&email=%s&name=%s&role=%s",
+        String redirectUrl = String.format(frontendUrl + "/oauth2/redirect?token=%s&email=%s&name=%s&role=%s",
                 URLEncoder.encode(jwt, StandardCharsets.UTF_8),
                 URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8),
                 URLEncoder.encode(user.getName(), StandardCharsets.UTF_8),

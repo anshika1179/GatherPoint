@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API_BASE_URL = 'http://localhost:8080/api/public';
-const GOOGLE_OAUTH_URL = 'http://localhost:8080/oauth2/authorization/google';
+import { API_PUBLIC_URL as API_BASE_URL, GOOGLE_OAUTH_URL } from '../config';
 
 const styles = {
   container: {

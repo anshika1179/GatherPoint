@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { Search, Clock, CheckCircle, ChevronRight } from 'lucide-react';
-
-const API_BASE = 'http://localhost:8080/api';
+import { API_BASE_URL as API_BASE, WS_URL } from '../config';
 
 function KdsApp() {
   const navigate = useNavigate();
@@ -74,7 +73,7 @@ function KdsApp() {
     if (!token) return;
     
     const connectWs = () => {
-      const socket = new WebSocket('ws://localhost:8080/ws/websocket');
+      const socket = new WebSocket(WS_URL);
       
       socket.onopen = () => {
         setWsConnected(true);

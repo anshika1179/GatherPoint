@@ -1,5 +1,5 @@
 // API Service - Centralized API calls
-const API_BASE_URL = 'http://localhost:8080/api';
+import { API_BASE_URL } from '../config';
 
 // Global fetch interceptor to append JWT token automatically
 const originalFetch = window.fetch;

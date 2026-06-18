@@ -6,7 +6,7 @@ import useAuth from '../hooks/useAuth';
 import { validators } from '../utils/validators';
 import Logo from './customer/Logo';
 
-const GOOGLE_OAUTH_URL = 'http://localhost:8080/oauth2/authorization/google';
+import { GOOGLE_OAUTH_URL } from '../config';
 
 export default function CustomerLoginPage() {
   const { login, signup } = useAuth();

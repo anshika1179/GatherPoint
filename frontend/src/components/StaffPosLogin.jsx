@@ -4,7 +4,7 @@ import { gsap } from "gsap";
 import { ChevronLeft } from "lucide-react";
 import Logo from "./customer/Logo";
 
-const GOOGLE_OAUTH_URL = 'http://localhost:8080/oauth2/authorization/google';
+import { GOOGLE_OAUTH_URL } from '../config';
 
 export default function StaffPosLogin() {
   const navigate = useNavigate();
