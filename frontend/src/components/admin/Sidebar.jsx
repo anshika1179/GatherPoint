@@ -18,12 +18,13 @@ import {
 } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 
-const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen, setMobileOpen }) => {
   const sidebarRef = useRef(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (window.innerWidth < 768) return;
     if (isCollapsed) {
       gsap.to(sidebarRef.current, { width: 80, duration: 0.3, ease: 'power2.inOut' });
     } else {
@@ -72,7 +73,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   return (
     <aside 
       ref={sidebarRef}
-      className="fixed left-0 top-0 h-screen bg-[#0A261C]/60 backdrop-blur-2xl border-r border-[#D4A373]/20 flex flex-col z-20 overflow-y-auto overflow-x-hidden shadow-[4px_0_24px_0_rgba(0,0,0,0.4)]"
+      className={`fixed left-0 top-0 h-screen bg-[#0A261C]/60 backdrop-blur-2xl border-r border-[#D4A373]/20 flex flex-col z-20 overflow-y-auto overflow-x-hidden shadow-[4px_0_24px_0_rgba(0,0,0,0.4)] transition-transform duration-300 ${
+        mobileOpen ? 'translate-x-0' : '-translate-x-full'
+      } md:translate-x-0`}
       style={{ width: '280px' }}
     >
       {/* Logo Area */}

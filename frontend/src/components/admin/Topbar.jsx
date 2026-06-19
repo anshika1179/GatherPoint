@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Bell, Search, Moon, Sun, User } from 'lucide-react';
+import { Bell, Search, Moon, User, Menu } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 
-const Topbar = () => {
+const Topbar = ({ onMenuToggle }) => {
   const { user } = useAuth();
   const [currentDate, setCurrentDate] = useState('');
 
@@ -18,14 +18,23 @@ const Topbar = () => {
   }, []);
 
   return (
-    <header className="h-20 px-8 flex items-center justify-between sticky top-0 z-10 bg-[#0A261C]/50 backdrop-blur-2xl border-b border-[#D4A373]/20 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+    <header className="h-16 md:h-20 px-4 md:px-8 flex items-center justify-between sticky top-0 z-10 bg-[#0A261C]/50 backdrop-blur-2xl border-b border-[#D4A373]/20 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
       
-      {/* Date & Search */}
-      <div className="flex items-center gap-8 flex-1">
-        <div className="text-gray-400 text-sm hidden md:block">
+      {/* Left: Hamburger + Date/Search */}
+      <div className="flex items-center gap-3 md:gap-8 flex-1 min-w-0">
+        {/* Mobile hamburger */}
+        <button
+          onClick={onMenuToggle}
+          className="md:hidden p-2 text-gray-400 hover:text-[#D4A373] transition-colors"
+          aria-label="Open sidebar"
+        >
+          <Menu size={22} />
+        </button>
+
+        <div className="text-gray-400 text-sm hidden md:block whitespace-nowrap">
           {currentDate}
         </div>
-        <div className="relative max-w-md w-full group">
+        <div className="relative max-w-md w-full hidden md:group md:block">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search size={18} className="text-gray-500 group-hover:text-[#D4A373] transition-colors" />
           </div>
@@ -38,29 +47,34 @@ const Topbar = () => {
       </div>
 
       {/* Right Side Icons */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3 md:gap-6 shrink-0">
         
+        {/* Mobile search icon */}
+        <button className="md:hidden text-gray-400 hover:text-[#D4A373] transition-colors p-2">
+          <Search size={20} />
+        </button>
+
         {/* Theme Toggle */}
         <button className="text-gray-400 hover:text-[#D4A373] transition-colors p-2 rounded-full hover:bg-[#D4A373]/10">
-          <Moon size={22} />
+          <Moon size={20} />
         </button>
 
         {/* Notification Bell */}
         <button className="relative text-gray-400 hover:text-[#D4A373] transition-colors p-2 rounded-full hover:bg-[#D4A373]/10">
-          <Bell size={22} />
-          <span className="absolute top-1.5 right-1.5 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-[#0A261C]"></span>
+          <Bell size={20} />
+          <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-[#0A261C]"></span>
         </button>
         
-        <div className="h-8 w-px bg-[#D4A373]/30 mx-2"></div>
+        <div className="h-6 md:h-8 w-px bg-[#D4A373]/30 mx-1 md:mx-2"></div>
 
         {/* Profile Avatar */}
-        <div className="flex items-center gap-3 cursor-pointer group">
+        <div className="flex items-center gap-2 md:gap-3 cursor-pointer group">
           <div className="text-right hidden sm:block group-hover:opacity-80 transition-opacity">
-            <p className="text-sm font-semibold text-[#FAF8F1]">{user?.name || 'Admin User'}</p>
-            <p className="text-xs text-[#D4A373]">Super Admin</p>
+            <p className="text-xs md:text-sm font-semibold text-[#FAF8F1]">{user?.name || 'Admin User'}</p>
+            <p className="text-[10px] md:text-xs text-[#D4A373]">Super Admin</p>
           </div>
-          <div className="h-10 w-10 rounded-full bg-[#2D6A4F] border-2 border-[#D4A373]/50 flex items-center justify-center text-white font-bold overflow-hidden shadow-lg group-hover:scale-105 transition-transform">
-            {user?.name ? user.name.charAt(0).toUpperCase() : <User size={20} />}
+          <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-[#2D6A4F] border-2 border-[#D4A373]/50 flex items-center justify-center text-white font-bold overflow-hidden shadow-lg group-hover:scale-105 transition-transform text-sm md:text-base">
+            {user?.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
           </div>
         </div>
       </div>
