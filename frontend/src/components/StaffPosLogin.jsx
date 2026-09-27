@@ -407,8 +407,6 @@ export default function StaffPosLogin() {
             <p className="text-center text-[12px] mt-[24px]" style={{ color: "rgba(255,255,255,0.2)" }}>
               This terminal is for authorised staff only.
             </p>
-          </div>
-        )}
 
         {/* STEP 2: Clerk Custom OTP Sign-In */}
         {selectedRole && (

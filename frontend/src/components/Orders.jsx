@@ -204,7 +204,7 @@ export default function Orders() {
             </button>
           ))}
         </div>
-      </GlassCard>
+      </div>
 
       {/* Orders Grid */}
       {loading ? (

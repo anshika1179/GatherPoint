@@ -17,8 +17,6 @@ import {
 const TAX_RATE = 0.05;
 const CATEGORY_ICONS = { Beverages: '☕', Starters: '🥗', Mains: '🍝', Desserts: '🍰', Specials: '⭐' };
 
-const TAX_RATE = 0.05;
-
 export default function PosTerminal() {
   const { user } = useAuth();
   const canSellOffline = user?.allowOfflineSelling !== false;
